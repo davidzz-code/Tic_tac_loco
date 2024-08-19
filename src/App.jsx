@@ -10,8 +10,13 @@ function App() {
   const [board, setBoard] = useState(Array(9).fill(null))
   const [turn, setTurn] = useState(TURNS.X)
 
-  function updateBoard() {
-    setTurn(prevTurn => prevTurn === TURNS.X ? TURNS.O : TURNS.X)
+  function updateBoard(index) {
+    const newBoard = [...board]
+    newBoard[index] = turn
+    setBoard(newBoard)
+
+    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
+    setTurn(newTurn)
   }
 
   return (
@@ -31,10 +36,15 @@ function App() {
           })
         }
       </section>
-      <section className="m-4 flex h-16">
-        <Square style="p-3 text-6xl border-none m-2" isSelected={turn === TURNS.X}>{TURNS.X}</Square>
-        <Square style="p-3 text-6xl border-none m-2" isSelected={turn === TURNS.O}>{TURNS.O}</Square>
+      <section className="m-4 flex justify-center items-center space-x-4 h-16">
+        <Square style="w-16 h-16 flex items-center justify-center text-5xl border-none rounded-md hover:bg-inherit" isSelected={turn === TURNS.X}>
+          {TURNS.X}
+        </Square>
+        <Square style="w-16 h-16 flex items-center justify-center text-5xl border-none rounded-md hover:bg-inherit" isSelected={turn === TURNS.O}>
+          {TURNS.O}
+        </Square>
       </section>
+
     </main>
   )
 }
