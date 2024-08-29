@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import Square from './components/Square'
-import {WinnerModal} from './components/WinnerModal'
+import Board from './components/Board'
+import WinnerModal from './components/WinnerModal'
 import confetti from 'canvas-confetti'
 import { TURNS } from './constants'
 import { checkWinnerFrom, checkEndGame } from './board'
@@ -59,21 +60,7 @@ function App() {
         <h1>Tic Tac Loco</h1>
         <button className="my-5 border-white bg-inherit" onClick={resetGame}>Empezar de nuevo</button>
       </header>
-      <section className={`grid grid-cols-3 w-[400px] h-[400px] border-2 border-gray-200 ${winnerOpacity}`}>
-        {
-          board.map((_, index) => {
-            return (
-              <Square
-                key={index}
-                index={index}
-                updateBoard={updateBoard}
-              >
-                {board[index]}
-              </Square>
-            )
-          })
-        }
-      </section>
+      <Board board={board} updateBoard={updateBoard} winnerOpacity={winnerOpacity} />
       <section className={`m-4 flex justify-center items-center space-x-4 h-16 ${winnerOpacity}`}>
         <Square style="w-16 h-16 flex items-center justify-center text-5xl border-none rounded-md hover:bg-inherit" isSelected={turn === TURNS.X}>
           {TURNS.X}
