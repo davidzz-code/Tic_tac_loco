@@ -65,7 +65,9 @@ function App() {
 
   return (
     <main className='w-screen h-screen flex flex-col justify-center items-center'>
-      <section className={`grid grid-cols-3 w-[600px] h-[600px] border-2 border-gray-200 ${winnerOpacity}`}>
+      <h1>Tic Tac Loco</h1>
+      <button className="my-5 border-white bg-inherit" onClick={resetGame}>Empezar de nuevo</button>
+      <section className={`grid grid-cols-3 w-[400px] h-[400px] border-2 border-gray-200 ${winnerOpacity}`}>
         {
           board.map((_, index) => {
             return (
