@@ -8,8 +8,14 @@ import './App.css'
 
 
 function App() {
-  const [board, setBoard] = useState(Array(9).fill(null))
-  const [turn, setTurn] = useState(TURNS.X)
+  const [board, setBoard] = useState(() => {
+    const boardFromStorage = window.localStorage.getItem('board')
+    return boardFromStorage ? JSON.parse(boardFromStorage) : Array(9).fill(null)
+  })
+  const [turn, setTurn] = useState(() => {
+    const turnFromStorage = window.localStorage.getItem('turn')
+    return turnFromStorage ? turnFromStorage : TURNS.X
+  })
   const [winner, setWinner] = useState(null)
   const winnerOpacity = winner || board.every(square => square !== null) ? 'opacity-50 blur-sm' : null
 
@@ -25,6 +31,9 @@ function App() {
     setTurn(newTurn)
     const newWinner = checkWinnerFrom(newBoard)
 
+    window.localStorage.setItem('board', JSON.stringify(newBoard))
+    window.localStorage.setItem('turn', newTurn)
+
     if (newWinner) {
       confetti()
       setWinner(newWinner)
@@ -39,6 +48,9 @@ function App() {
     setWinner(null)
     setTurn(prevTurn => prevTurn === TURNS.X ? TURNS.X : TURNS.O)
     setBoard(Array(9).fill(null))
+
+    window.localStorage.removeItem('board')
+    windoew.localStorage.removeItem('turn')
   }
 
   return (
