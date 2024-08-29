@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import Square from './components/Square'
+import Turns from './components/Turns'
 import Board from './components/Board'
 import WinnerModal from './components/WinnerModal'
 import confetti from 'canvas-confetti'
@@ -41,8 +41,6 @@ function App() {
     } else if(checkEndGame(newBoard)) {
       setWinner(false)
     }
-    
-    // TODO: Check if game is over
   }
 
   function resetGame() {
@@ -57,18 +55,11 @@ function App() {
   return (
     <main className='w-screen h-screen flex flex-col justify-center items-center'>
       <header className={`flex flex-col justify-center items-center ${winnerOpacity}`}>
-        <h1>Tic Tac Loco</h1>
+        <h2 className="text-xl">Tic Tac Loco</h2>
         <button className="my-5 border-white bg-inherit" onClick={resetGame}>Empezar de nuevo</button>
       </header>
-      <Board board={board} updateBoard={updateBoard} winnerOpacity={winnerOpacity} />
-      <section className={`m-4 flex justify-center items-center space-x-4 h-16 ${winnerOpacity}`}>
-        <Square style="w-16 h-16 flex items-center justify-center text-5xl border-none rounded-md hover:bg-inherit" isSelected={turn === TURNS.X}>
-          {TURNS.X}
-        </Square>
-        <Square style="w-16 h-16 flex items-center justify-center text-5xl border-none rounded-md hover:bg-inherit" isSelected={turn === TURNS.O}>
-          {TURNS.O}
-        </Square>
-      </section>
+      <Board board={board} updateBoard={updateBoard} winnerOpacity={winnerOpacity}/>
+      <Turns turn={turn} winnerOpacity={winnerOpacity} />
       <WinnerModal winner={winner} resetGame={resetGame} />
     </main>
   )
