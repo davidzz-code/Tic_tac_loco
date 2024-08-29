@@ -1,7 +1,9 @@
 import React, {useState} from 'react'
 import Square from './components/Square'
+import {WinnerModal} from './components/WinnerModal'
 import confetti from 'canvas-confetti'
-import {TURNS, WINNER_COMBOS} from './constants'
+import { TURNS } from './constants'
+import { checkWinnerFrom, checkEndGame } from './board'
 import './App.css'
 
 
@@ -10,10 +12,6 @@ function App() {
   const [turn, setTurn] = useState(TURNS.X)
   const [winner, setWinner] = useState(null)
   const winnerOpacity = winner || board.every(square => square !== null) ? 'opacity-50 blur-sm' : null
-
-  function checkEndGame(newBoard) {
-    return newBoard.every(square => square !== null)
-  }
 
   function updateBoard(index) {
     
@@ -25,7 +23,7 @@ function App() {
 
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
-    const newWinner = checkWinner(newBoard)
+    const newWinner = checkWinnerFrom(newBoard)
 
     if (newWinner) {
       confetti()
@@ -37,21 +35,6 @@ function App() {
     // TODO: Check if game is over
   }
 
-  function checkWinner(boardToCheck) {
-    for (const combo of WINNER_COMBOS) {
-      const [a, b, c] = combo
-      console.log(a, b, c)
-      if (
-        boardToCheck[a] &&
-        boardToCheck[a] === boardToCheck[b] &&
-        boardToCheck[a] === boardToCheck[c]
-      )
-      {
-        return boardToCheck[a]
-      }
-    }
-    return null
-  }
   function resetGame() {
     setWinner(null)
     setTurn(prevTurn => prevTurn === TURNS.X ? TURNS.X : TURNS.O)
@@ -87,27 +70,7 @@ function App() {
           {TURNS.O}
         </Square>
       </section>
-      {
-        winner !== null && (
-          <section className="w-screen h-screen absolute flex justify-center items-center">
-            <div className="px-28 py-10 bg-blue-900">
-              <h2 className="text-3xl">
-                {
-                  winner === false
-                    ? 'Empate'
-                    : 'Ganó:'
-                }
-              </h2>
-              <header>
-                {winner && <Square style="hover:bg-inherit my-4">{winner}</Square>}
-              </header>
-              <footer>
-                <button onClick={resetGame}>Empezar de nuevo</button>
-              </footer>
-            </div>
-          </section>
-        )
-      }
+      <WinnerModal winner={winner} resetGame={resetGame} />
     </main>
   )
 }
