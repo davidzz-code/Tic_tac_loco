@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import Square from './components/Square'
+import confetti from 'canvas-confetti'
 import './App.css'
 const TURNS = {
   X: 'x',
@@ -21,7 +22,11 @@ function App() {
   const [board, setBoard] = useState(Array(9).fill(null))
   const [turn, setTurn] = useState(TURNS.X)
   const [winner, setWinner] = useState(null)
-  const winnerOpacity = winner ? 'opacity-50 blur-sm' : null
+  const winnerOpacity = winner || board.every(square => square !== null) ? 'opacity-50 blur-sm' : null
+
+  function checkEndGame(newBoard) {
+    return newBoard.every(square => square !== null)
+  }
 
   function updateBoard(index) {
     
@@ -34,9 +39,12 @@ function App() {
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
     const newWinner = checkWinner(newBoard)
-    
+
     if (newWinner) {
+      confetti()
       setWinner(newWinner)
+    } else if(checkEndGame(newBoard)) {
+      setWinner(false)
     }
     
     // TODO: Check if game is over
@@ -65,8 +73,10 @@ function App() {
 
   return (
     <main className='w-screen h-screen flex flex-col justify-center items-center'>
-      <h1>Tic Tac Loco</h1>
-      <button className="my-5 border-white bg-inherit" onClick={resetGame}>Empezar de nuevo</button>
+      <header className={`flex flex-col justify-center items-center ${winnerOpacity}`}>
+        <h1>Tic Tac Loco</h1>
+        <button className="my-5 border-white bg-inherit" onClick={resetGame}>Empezar de nuevo</button>
+      </header>
       <section className={`grid grid-cols-3 w-[400px] h-[400px] border-2 border-gray-200 ${winnerOpacity}`}>
         {
           board.map((_, index) => {
