@@ -34,7 +34,7 @@ export default function SmallTicTacToe({board, turn, winner, setBoard, setTurn, 
 
   return (
     <section className='w-screen h-screen flex flex-col justify-center items-center'>
-      <Board board={board} updateBoard={updateBoard} winnerOpacity={winnerOpacity}/>
+      <Board board={board} updateBoard={updateBoard} turn={turn} winnerOpacity={winnerOpacity}/>
       <Turns turn={turn} winnerOpacity={winnerOpacity} />
       <WinnerModal winner={winner} resetGame={resetGame} />
     </section>
