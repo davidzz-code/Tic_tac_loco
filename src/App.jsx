@@ -1,29 +1,57 @@
-import React, {useState} from 'react'
-import SmallTicTacToe from './components/SmallTicTacToe'
-import { TURNS } from './constants'
 import './App.css'
+import { TURNS } from './constants'
+import React, {useState} from 'react'
+import Turns from './components/Turns'
+import Board from './components/Board'
+import confetti from 'canvas-confetti'
+import WinnerModal from './components/WinnerModal'
+import { checkWinnerFrom, checkEndGame } from './board'
 
 
 function App() {
   const [board, setBoard] = useState(() => {
     const boardFromStorage = window.localStorage.getItem('board')
-    return boardFromStorage ? JSON.parse(boardFromStorage) : Array(9).fill(null)
+    return boardFromStorage ? JSON.parse(boardFromStorage) : Array(9).fill(Array(9).fill(null))
   })
   const [turn, setTurn] = useState(() => {
     const turnFromStorage = window.localStorage.getItem('turn')
     return turnFromStorage ? turnFromStorage : TURNS.X
   })
   const [winner, setWinner] = useState(null)
-  const winnerOpacity = winner || board.every(square => square !== null) ? 'opacity-50 blur-sm' : null
+  const winnerOpacity = winner || board.flat().every(square => square !== null) ? 'opacity-50 blur-sm' : null
 
 
   function resetGame() {
     setWinner(null)
     setTurn(prevTurn => prevTurn === TURNS.X ? TURNS.X : TURNS.O)
-    setBoard(Array(9).fill(null))
+    setBoard(Array(9).fill(Array(9).fill(Array(9).fill(null))))
 
     window.localStorage.removeItem('board')
     windoew.localStorage.removeItem('turn')
+  }
+
+  function updateBoard(boardIndex, squareIndex) {
+    
+    if (board[boardIndex][squareIndex] || winner) return
+    
+    const newBoard = [...board]
+    newBoard[boardIndex] = [...newBoard[boardIndex]]
+    newBoard[boardIndex][squareIndex] = turn
+    setBoard(newBoard)
+
+    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
+    setTurn(newTurn)
+    const newWinner = checkWinnerFrom(newBoard)
+
+    window.localStorage.setItem('board', JSON.stringify(newBoard))
+    window.localStorage.setItem('turn', newTurn)
+
+    if (newWinner) {
+      confetti()
+      setWinner(newWinner)
+    } else if(checkEndGame(newBoard)) {
+      setWinner(false)
+    }
   }
 
   return (
@@ -37,16 +65,11 @@ function App() {
           Empezar de nuevo
         </button>
       </header>
-      <SmallTicTacToe
-        board={board}
-        turn={turn}
-        winner={winner}
-        setBoard={setBoard}
-        setTurn={setTurn}
-        setWinner={setWinner}
-        resetGame={resetGame}
-        winnerOpacity={winnerOpacity}
-      />
+      <section className='w-screen h-screen flex flex-col justify-center items-center'>
+        <Board board={board} updateBoard={updateBoard} turn={turn} winnerOpacity={winnerOpacity} />
+        <Turns turn={turn} winnerOpacity={winnerOpacity} />
+        <WinnerModal winner={winner} resetGame={resetGame} />
+    </section>
     </main>
   )
 }
