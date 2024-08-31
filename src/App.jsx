@@ -5,7 +5,7 @@ import Turns from './components/Turns'
 import Board from './components/Board'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
-import { checkWinnerFrom, checkEndGame } from './board'
+import { checkWinnerSmallBoard, checkEndGame } from './board'
 
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
     setBoard(Array(9).fill(Array(9).fill(Array(9).fill(null))))
 
     window.localStorage.removeItem('board')
-    windoew.localStorage.removeItem('turn')
+    window.localStorage.removeItem('turn')
   }
 
   function updateBoard(boardIndex, squareIndex) {
@@ -41,15 +41,19 @@ function App() {
 
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
-    const newWinner = checkWinnerFrom(newBoard)
+
+    const smallBoardWinner = checkWinnerSmallBoard(newBoard[boardIndex])
 
     window.localStorage.setItem('board', JSON.stringify(newBoard))
     window.localStorage.setItem('turn', newTurn)
 
-    if (newWinner) {
-      confetti()
-      setWinner(newWinner)
-    } else if(checkEndGame(newBoard)) {
+    if (smallBoardWinner) {
+      newBoard[boardIndex] = smallBoardWinner
+      setBoard(newBoard)
+
+      // confetti()
+      // setWinner(newWinner)
+    } else if(checkEndGame(newBoard[boardIndex])) {
       setWinner(false)
     }
   }
