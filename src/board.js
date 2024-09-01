@@ -42,14 +42,23 @@ export function checkEndGame(boardToCheck) {
   return true
 }
 
-export function redirectMove(board, squareIndex) {
-
-  return 
-  if (Array.isArray(board[squareIndex])) {
-    return newSquareStyles.map((_, index) => {
-      if (Array.isArray(board[index])) return 'opacity-50'
-      return 'opacity-100'
-    })
+export function redirectMove(board, squareIndex, activeSquares) {
+  const disabledSquaresStyle = {
+    opacity: 'opacity-50',
+    disableClick: true,
+    hover: '',
   }
-  return newSquareStyles
+  
+  const activeSquaresStyle = {
+    opacity: 'opacity-100',
+    disableClick: false,
+    hover: 'hover:bg-gray-700 hover:cursor-pointer',
+  }
+
+  return activeSquares.map((item, index) => {
+    if (!Array.isArray(board[squareIndex])) {
+      return activeSquaresStyle
+    }
+    return index === squareIndex ? activeSquaresStyle : disabledSquaresStyle
+  })
 }

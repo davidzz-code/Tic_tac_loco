@@ -19,62 +19,30 @@ function App() {
   })
   const [winner, setWinner] = useState(null)
   const [endGameOpacity, setEndGameOpacity] = useState('')
-  const [squareStyles, setSquareStyles] = useState([
-    {
-      opacity: 'opacity-30',
-      disableClick: true,
-      hover: '',
-    },
-    {
-      opacity: 'opacity-100',
-      disableClick: false,
-      hover: 'hover:bg-gray-700 hover:cursor-pointer',
-    },
-    {
-      opacity: 'opacity-30',
-      disableClick: true,
-      hover: '',
-    },
-    {
-      opacity: 'opacity-30',
-      disableClick: true,
-      hover: '',
-    },
-    {
-      opacity: 'opacity-30',
-      disableClick: true,
-      hover: '',
-    },
-    {
-      opacity: 'opacity-30',
-      disableClick: true,
-      hover: '',
-    },
-    {
-      opacity: 'opacity-30',
-      disableClick: true,
-      hover: '',
-    },
-    {
-      opacity: 'opacity-30',
-      disableClick: true,
-      hover: '',
-    },
-    {
-      opacity: 'opacity-30',
-      disableClick: true,
-      hover: '',
-    },
-  ])
+  const [activeSquares, setActiveSquares] = useState(() => {
+    const activeSquareFromStorage = window.localStorage.getItem('active-squares')
+    return activeSquareFromStorage ? JSON.parse(activeSquareFromStorage) :
+      Array(9).fill({
+        opacity: 'opacity-100',
+        disableClick: false,
+        hover: 'hover:bg-gray-700 hover:cursor-pointer',
+      })
+  })
 
   function resetGame() {
     setWinner(null)
     setTurn(prevTurn => prevTurn === TURNS.X ? TURNS.X : TURNS.O)
     setBoard(Array(9).fill(Array(9).fill(null)))
     setEndGameOpacity('opacity-100 blur-none')
+    setActiveSquares(Array(9).fill({
+      opacity: 'opacity-100',
+      disableClick: false,
+      hover: 'hover:bg-gray-700 hover:cursor-pointer',
+    }))
 
     window.localStorage.removeItem('board')
     window.localStorage.removeItem('turn')
+    window.localStorage.removeItem('active-squares')
   }
 
   function updateBoard(boardIndex, squareIndex) {
@@ -93,6 +61,7 @@ function App() {
 
     window.localStorage.setItem('board', JSON.stringify(newBoard))
     window.localStorage.setItem('turn', newTurn)
+    window.localStorage.setItem('active-squares', JSON.stringify(redirectMove(board, squareIndex, activeSquares)))
 
     if (smallBoardWinner) {
       newBoard[boardIndex] = smallBoardWinner
@@ -109,8 +78,8 @@ function App() {
         setWinner(false)
       }
     }
-    // const newSquareStyles = redirectMove(board, squareIndex)
-    // setSquareStyles(newSquareStyles)
+    const newActiveSquares = redirectMove(board, squareIndex, activeSquares)
+    setActiveSquares(newActiveSquares)
   }
 
   return (
@@ -125,7 +94,7 @@ function App() {
         </button>
       </header>
       <section className='w-screen h-screen flex flex-col justify-center items-center'>
-        <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} squareStyles={squareStyles} />
+        <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} />
         <Turns turn={turn} endGameOpacity={endGameOpacity} />
         <WinnerModal winner={winner} resetGame={resetGame} />
     </section>
