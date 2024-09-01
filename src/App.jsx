@@ -61,7 +61,7 @@ function App() {
 
     window.localStorage.setItem('board', JSON.stringify(newBoard))
     window.localStorage.setItem('turn', newTurn)
-    window.localStorage.setItem('active-squares', JSON.stringify(redirectMove(board, squareIndex, activeSquares)))
+    window.localStorage.setItem('active-squares', JSON.stringify(redirectMove(newBoard, squareIndex, activeSquares)))
 
     if (smallBoardWinner) {
       newBoard[boardIndex] = smallBoardWinner
@@ -78,7 +78,7 @@ function App() {
         setWinner(false)
       }
     }
-    const newActiveSquares = redirectMove(board, squareIndex, activeSquares)
+    const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
     setActiveSquares(newActiveSquares)
   }
 

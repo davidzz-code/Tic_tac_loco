@@ -42,7 +42,7 @@ export function checkEndGame(boardToCheck) {
   return true
 }
 
-export function redirectMove(board, squareIndex, activeSquares) {
+export function redirectMove(newBoard, squareIndex, activeSquares) {
   const disabledSquaresStyle = {
     opacity: 'opacity-50',
     disableClick: true,
@@ -56,7 +56,7 @@ export function redirectMove(board, squareIndex, activeSquares) {
   }
 
   return activeSquares.map((item, index) => {
-    if (!Array.isArray(board[squareIndex])) {
+    if (!Array.isArray(newBoard[squareIndex])) {
       return activeSquaresStyle
     }
     return index === squareIndex ? activeSquaresStyle : disabledSquaresStyle
