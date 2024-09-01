@@ -10,13 +10,13 @@ export default function Board({ board, updateBoard, endGameOpacity }) {
 
   const getBoardStyle = (index) => {
     let borderStyle = 'border-4 border-yellow-600'
-    if (index % 3 === 0) borderStyle += ' border-l-0'
-    if (index % 3 === 2) borderStyle += ' border-r-0'
+    if (index % 3 === 0) borderStyle += ' border-l-transparent'
+    if (index % 3 === 2) borderStyle += ' border-r-transparent'
     if (Math.floor(index / 3) === 0) borderStyle += ' border-t-0'
     if (Math.floor(index / 3) === 2) borderStyle += ' border-b-0'
     return borderStyle
   };
-  
+
   return (
     <section
       className={`grid grid-cols-3 ${endGameOpacity} mx-auto w-full max-w-[600px] aspect-square`}
