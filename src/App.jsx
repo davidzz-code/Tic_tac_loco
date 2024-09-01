@@ -24,6 +24,7 @@ function App() {
     setWinner(null)
     setTurn(prevTurn => prevTurn === TURNS.X ? TURNS.X : TURNS.O)
     setBoard(Array(9).fill(Array(9).fill(null)))
+    setEndGameOpacity('opacity-100 blur-none')
 
     window.localStorage.removeItem('board')
     window.localStorage.removeItem('turn')
@@ -55,10 +56,9 @@ function App() {
       if (newWinner) {
         confetti()
         setWinner(newWinner)
-        setEndGameOpacity('opacity-100 blur-none')
+        setEndGameOpacity('opacity-70 blur-sm')
       } else if (checkEndGame(newBoard)) {
-        console.log('Es un empate')
-        setEndGameOpacity('opacity-100 blur-none')
+        setEndGameOpacity('opacity-70 blur-sm')
         setWinner(false)
       }
     } 
