@@ -44,7 +44,7 @@ export function checkEndGame(boardToCheck) {
 
 export function redirectMove(newBoard, squareIndex, activeSquares) {
   const disabledSquaresStyle = {
-    opacity: 'opacity-50',
+    opacity: 'opacity-25',
     disableClick: true,
     hover: '',
   }

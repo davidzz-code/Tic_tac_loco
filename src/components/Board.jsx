@@ -2,7 +2,7 @@ import Square from "./Square";
 
 export default function Board({ board, updateBoard, endGameOpacity, activeSquares }) {
   const getSquareStyle = (index) => {
-    if (index === 4) return 'border-2 border-4ray-200'
+    if (index === 4) return 'border-2 border-gray-200'
     if (index === 1 || index === 7) return 'border-x-2 border-gray-200'
     if (index === 3 || index === 5) return 'border-y-2 border-gray-200'
     return 'border-2 border-transparent'
