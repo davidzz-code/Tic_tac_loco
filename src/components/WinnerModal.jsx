@@ -6,7 +6,7 @@ export default function WinnerModal({ winner, resetGame }) {
   const winnerText = winner === false ? 'Empate' : `Ganó:`
 
   return (
-    <section className="w-screen h-screen absolute flex justify-center items-center">
+    <section className="absolute flex justify-center items-center">
       <div className="px-28 py-10 bg-blue-900">
         <h2 className="text-3xl">{winnerText}</h2>
         <header>
