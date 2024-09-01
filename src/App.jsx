@@ -5,7 +5,7 @@ import Turns from './components/Turns'
 import Board from './components/Board'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
-import { checkWinnerSmallBoard, checkEndGame } from './board'
+import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard } from './board'
 
 
 function App() {
@@ -18,13 +18,12 @@ function App() {
     return turnFromStorage ? turnFromStorage : TURNS.X
   })
   const [winner, setWinner] = useState(null)
-  const winnerOpacity = winner || board.flat().every(square => square !== null) ? 'opacity-50 blur-sm' : null
-
+  const [endGameOpacity, setEndGameOpacity] = useState('')
 
   function resetGame() {
     setWinner(null)
     setTurn(prevTurn => prevTurn === TURNS.X ? TURNS.X : TURNS.O)
-    setBoard(Array(9).fill(Array(9).fill(Array(9).fill(null))))
+    setBoard(Array(9).fill(Array(9).fill(null)))
 
     window.localStorage.removeItem('board')
     window.localStorage.removeItem('turn')
@@ -51,16 +50,23 @@ function App() {
       newBoard[boardIndex] = smallBoardWinner
       setBoard(newBoard)
 
-      // confetti()
-      // setWinner(newWinner)
-    } else if(checkEndGame(newBoard[boardIndex])) {
-      setWinner(false)
-    }
+      const newWinner = checkWinnerMainBoard(newBoard)
+
+      if (newWinner) {
+        confetti()
+        setWinner(newWinner)
+        setEndGameOpacity('opacity-100 blur-none')
+      } else if (checkEndGame(newBoard)) {
+        console.log('Es un empate')
+        setEndGameOpacity('opacity-100 blur-none')
+        setWinner(false)
+      }
+    } 
   }
 
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
-      <header className={`w-full flex justify-between items-center px-4 py-2 ${winnerOpacity}`}>
+      <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
         <h2 className="text-xl font-semibold">Tic Tac Loco</h2>
         <button
           className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300"
@@ -70,8 +76,8 @@ function App() {
         </button>
       </header>
       <section className='w-screen h-screen flex flex-col justify-center items-center'>
-        <Board board={board} updateBoard={updateBoard} turn={turn} winnerOpacity={winnerOpacity} />
-        <Turns turn={turn} winnerOpacity={winnerOpacity} />
+        <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} />
+        <Turns turn={turn} endGameOpacity={endGameOpacity} />
         <WinnerModal winner={winner} resetGame={resetGame} />
     </section>
     </main>

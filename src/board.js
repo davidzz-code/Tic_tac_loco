@@ -1,4 +1,4 @@
-import { WINNER_COMBOS } from "./constants";
+import { TURNS, WINNER_COMBOS } from "./constants";
 
 export function checkWinnerSmallBoard(boardToCheck) {
   for (const combo of WINNER_COMBOS) {
@@ -15,6 +15,29 @@ export function checkWinnerSmallBoard(boardToCheck) {
   return null
 }
 
-export function checkEndGame(newBoard) {
-  return newBoard.every(square => square !== null)
+export function checkWinnerMainBoard(boardToCheck) {
+  for (const combo of WINNER_COMBOS) {
+    const [a, b, c] = combo
+
+    const valueA = boardToCheck[a]
+    const valueB = boardToCheck[b]
+    const valueC = boardToCheck[c]
+    if (
+      valueA &&
+      !Array.isArray(valueA) &&
+      valueA === valueB &&
+      valueA === valueC
+    )
+    {
+      return valueA
+    }
+  }
+  return null
+}
+
+export function checkEndGame(boardToCheck) {
+  for (const smallBoard of boardToCheck) {
+    if (Array.isArray(smallBoard)) return false
+  }
+  return true
 }

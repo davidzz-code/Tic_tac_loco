@@ -15,7 +15,7 @@ export default function Square({ children, boardIndex, squareIndex, updateBoard,
   }
   return (
     <div
-      className={`${getColor(children)} font-bold aspect-square flex justify-center items-center text-6xl border-2 border-gray-200 rounded-none ${style} ${className}`}
+      className={`${getColor(children)} h-full font-bold aspect-square flex justify-center items-center text-5xl rounded-none ${style} ${className}`}
       onClick={handleClick}
     >{children}</div>
   )
