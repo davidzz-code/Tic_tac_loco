@@ -1,6 +1,6 @@
 import { TURNS } from '../constants'
 
-export default function Square({ children, boardIndex, squareIndex, updateBoard, isSelected, disableClick, style, opacity = 'opacity-100' }) {
+export default function Square({ children, boardIndex, squareIndex, updateBoard, isSelected, disableClick = true, style, opacity = 'opacity-100' }) {
   const selectedStyle = isSelected ? '' : `${opacity}`
 
     const getColor = (value) => {

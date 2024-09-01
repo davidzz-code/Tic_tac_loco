@@ -5,7 +5,7 @@ import Turns from './components/Turns'
 import Board from './components/Board'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
-import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard } from './board'
+import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard, redirectMove } from './board'
 
 
 function App() {
@@ -19,6 +19,53 @@ function App() {
   })
   const [winner, setWinner] = useState(null)
   const [endGameOpacity, setEndGameOpacity] = useState('')
+  const [squareStyles, setSquareStyles] = useState([
+    {
+      opacity: 'opacity-30',
+      disableClick: true,
+      hover: '',
+    },
+    {
+      opacity: 'opacity-100',
+      disableClick: false,
+      hover: 'hover:bg-gray-700 hover:cursor-pointer',
+    },
+    {
+      opacity: 'opacity-30',
+      disableClick: true,
+      hover: '',
+    },
+    {
+      opacity: 'opacity-30',
+      disableClick: true,
+      hover: '',
+    },
+    {
+      opacity: 'opacity-30',
+      disableClick: true,
+      hover: '',
+    },
+    {
+      opacity: 'opacity-30',
+      disableClick: true,
+      hover: '',
+    },
+    {
+      opacity: 'opacity-30',
+      disableClick: true,
+      hover: '',
+    },
+    {
+      opacity: 'opacity-30',
+      disableClick: true,
+      hover: '',
+    },
+    {
+      opacity: 'opacity-30',
+      disableClick: true,
+      hover: '',
+    },
+  ])
 
   function resetGame() {
     setWinner(null)
@@ -61,7 +108,9 @@ function App() {
         setEndGameOpacity('opacity-70 blur-sm')
         setWinner(false)
       }
-    } 
+    }
+    // const newSquareStyles = redirectMove(board, squareIndex)
+    // setSquareStyles(newSquareStyles)
   }
 
   return (
@@ -76,7 +125,7 @@ function App() {
         </button>
       </header>
       <section className='w-screen h-screen flex flex-col justify-center items-center'>
-        <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} />
+        <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} squareStyles={squareStyles} />
         <Turns turn={turn} endGameOpacity={endGameOpacity} />
         <WinnerModal winner={winner} resetGame={resetGame} />
     </section>

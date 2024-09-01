@@ -1,6 +1,6 @@
 import Square from "./Square";
 
-export default function Board({ board, updateBoard, endGameOpacity }) {
+export default function Board({ board, updateBoard, endGameOpacity, squareStyles }) {
   const getSquareStyle = (index) => {
     if (index === 4) return 'border-2 border-4ray-200'
     if (index === 1 || index === 7) return 'border-x-2 border-gray-200'
@@ -31,8 +31,8 @@ export default function Board({ board, updateBoard, endGameOpacity }) {
                   boardIndex={boardIndex}
                   squareIndex={squareIndex}
                   updateBoard={updateBoard}
-                  disableClick={false}
-                  style={`hover:bg-gray-700 hover:cursor-pointer ${getSquareStyle(squareIndex)}`}
+                  disableClick={squareStyles[boardIndex].disableClick}
+                  style={`${squareStyles[boardIndex].opacity} ${squareStyles[boardIndex].hover} ${getSquareStyle(squareIndex)}`}
                 >
                   {square}
                 </Square>

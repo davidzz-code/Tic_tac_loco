@@ -41,3 +41,15 @@ export function checkEndGame(boardToCheck) {
   }
   return true
 }
+
+export function redirectMove(board, squareIndex) {
+
+  return 
+  if (Array.isArray(board[squareIndex])) {
+    return newSquareStyles.map((_, index) => {
+      if (Array.isArray(board[index])) return 'opacity-50'
+      return 'opacity-100'
+    })
+  }
+  return newSquareStyles
+}
