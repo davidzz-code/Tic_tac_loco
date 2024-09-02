@@ -90,7 +90,7 @@ function App() {
           className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300"
           onClick={resetGame}
         >
-          Empezar de nuevo
+          Restart
         </button>
       </header>
       <section className='w-screen h-screen flex flex-col justify-center items-center'>

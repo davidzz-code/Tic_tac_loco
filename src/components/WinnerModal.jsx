@@ -3,7 +3,7 @@ import Square from "./Square"
 export default function WinnerModal({ winner, resetGame }) {
   if (winner === null) return null
 
-  const winnerText = winner === false ? 'Empate' : `Ganó:`
+  const winnerText = winner === false ? 'Draw' : `The winner is:`
 
   return (
     <section className="absolute flex justify-center items-center">
@@ -13,7 +13,7 @@ export default function WinnerModal({ winner, resetGame }) {
           {winner && <Square style="hover:bg-inherit my-4">{winner}</Square>}
         </header>
         <footer>
-          <button onClick={resetGame}>Empezar de nuevo</button>
+          <button onClick={resetGame}>Restart</button>
         </footer>
       </div>
     </section>
