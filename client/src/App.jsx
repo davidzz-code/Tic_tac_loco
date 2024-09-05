@@ -1,4 +1,5 @@
 import './App.css'
+import { io } from 'socket.io-client'
 import { TURNS } from './constants'
 import React, {useState} from 'react'
 import Turns from './components/Turns'
@@ -28,6 +29,10 @@ function App() {
         hover: 'hover:bg-gray-700 hover:cursor-pointer',
       })
   })
+
+  const socket = io('http://localhost:3000')
+  const [isConnected, setIsConnected] = useState(false)
+  // TODO: Connect to the server using useEffect
 
   function resetGame() {
     setWinner(null)
