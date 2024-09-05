@@ -1,25 +1,58 @@
-import express from 'express';
-import logger from 'morgan';
-
-import { Server } from 'socket.io';
-import { createServer } from 'node:http';
+import { Server } from 'socket.io'
+import { createServer } from 'node:http'
 
 const port = process.env.PORT ?? 3000
 
-const app = express()
-const server = createServer(app)
-const io = new Server(server)
+const server = createServer()
 
-io.on('connection', () => {
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  }
+})
+
+io.on('connection', (socket) => {
   console.log('a user connected')
 })
 
-app.use(logger('dev'))
-
-app.get('/', (req, res) => { 
-  res.sendFile(process.cwd() + '/index.html')
-})
+// io.on('disconnect', (socket) => {
+//   console.log('a user disconnected')
+// })
 
 server.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`)
 })
+
+
+
+
+// import express from 'express';
+// import logger from 'morgan';
+
+// import { Server } from 'socket.io';
+// import { createServer } from 'node:http';
+
+// const port = process.env.PORT ?? 3000
+
+// const app = express()
+// const server = createServer(app)
+// const io = new Server(server, {
+//   cors: {
+//     origin: "http://localhost:3000", // Cambia esto al origen de tu frontend
+//     methods: ["GET", "POST"]
+//   }
+// });
+
+// io.on('connection', (socket) => {
+//   console.log('a user connected')
+// })
+
+// app.use(logger('dev'))
+
+// app.get('/', (req, res) => { 
+//   res.sendFile(process.cwd() + '/client/index.html')
+// })
+
+// server.listen(port, () => {
+//   console.log(`Server is running on port ${port}`);
+// })
