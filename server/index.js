@@ -8,16 +8,19 @@ const server = createServer()
 const io = new Server(server, {
   cors: {
     origin: "*",
+  },
+  connectionStateRecovery: {
+    
   }
 })
 
 io.on('connection', (socket) => {
   console.log('a user connected')
-})
 
-// io.on('disconnect', (socket) => {
-//   console.log('a user disconnected')
-// })
+  socket.on('syncBoard', (data) => {
+    io.emit('syncBoard', data)
+  })
+})
 
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`)
