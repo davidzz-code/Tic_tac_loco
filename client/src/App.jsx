@@ -1,7 +1,7 @@
 import './App.css'
 import { io } from 'socket.io-client'
 import { TURNS } from './constants'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import Turns from './components/Turns'
 import Board from './components/Board'
 import confetti from 'canvas-confetti'
@@ -32,22 +32,44 @@ function App() {
 
   const socket = io('http://localhost:3000')
   const [isConnected, setIsConnected] = useState(false)
-  // TODO: Connect to the server using useEffect
+  useEffect(() => {
+
+    socket.on('connect', () => setIsConnected(true))
+
+    socket.on('syncBoard', (data) => {
+      setBoard(data.board)
+      setTurn(data.turn)
+      setActiveSquares(data.activeSquares)
+    })
+
+    return () => {
+      socket.off('connect')
+      socket.off('syncBoard')
+    }
+  }, [])
 
   function resetGame() {
-    setWinner(null)
-    setTurn(prevTurn => prevTurn === TURNS.X ? TURNS.X : TURNS.O)
-    setBoard(Array(9).fill(Array(9).fill(null)))
-    setEndGameOpacity('opacity-100 blur-none')
-    setActiveSquares(Array(9).fill({
+    const blankBoard = Array(9).fill(Array(9).fill(null))
+    const blankActiveSquares = Array(9).fill({
       opacity: 'opacity-100',
       disableClick: false,
       hover: 'hover:bg-gray-700 hover:cursor-pointer',
-    }))
+    })
+    const blankTurn = TURNS.X
+    const blankEndGameOpacity = 'opacity-100 blur-none'
+    const blankWinner = null    
+    
+    setBoard(blankBoard)
+    setActiveSquares(blankActiveSquares)
+    setTurn(blankTurn)
+    setEndGameOpacity(blankEndGameOpacity)
+    setWinner(blankWinner)
 
     window.localStorage.removeItem('board')
     window.localStorage.removeItem('turn')
     window.localStorage.removeItem('active-squares')
+
+    sendBoard(blankBoard, blankTurn, blankActiveSquares, blankEndGameOpacity, blankWinner)
   }
 
   function updateBoard(boardIndex, squareIndex) {
@@ -85,6 +107,19 @@ function App() {
     }
     const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
     setActiveSquares(newActiveSquares)
+
+    sendBoard(newBoard, newTurn, newActiveSquares)
+  }
+
+  function sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity = endGameOpacity, newWinner = winner) {
+    socket.emit('syncBoard', {
+      user: socket.id,
+      board: newBoard,
+      turn: newTurn,
+      activeSquares: newActiveSquares,
+      endGameOpacity: newEndGameOpacity,
+      winner: newWinner,
+    })
   }
 
   return (
