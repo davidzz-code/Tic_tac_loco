@@ -55,7 +55,7 @@ export function redirectMove(newBoard, squareIndex, activeSquares) {
     hover: 'hover:bg-gray-700 hover:cursor-pointer',
   }
 
-  return activeSquares.map((item, index) => {
+  return activeSquares.map((_, index) => {
     if (!Array.isArray(newBoard[squareIndex])) {
       return activeSquaresStyle
     }
