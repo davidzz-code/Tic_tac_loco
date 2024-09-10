@@ -44,7 +44,7 @@ function App() {
     }
   })
 
-  const socket = io('http://localhost:3000', {
+  const socket = io('https://tic-tac-loco-backend.vercel.app/', {
     reconnection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 1000,
