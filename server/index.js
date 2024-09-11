@@ -17,7 +17,7 @@ const server = createServer((req, res) => {
 
 const io = new Server(server, {
   cors: {
-    origin: 'https://tic-tac-loco.vercel.app',
+    origin: '*',
   },
 })
 
