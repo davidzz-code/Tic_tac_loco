@@ -44,7 +44,7 @@ function App() {
     }
   })
 
-  const socket = io('https://tic-tac-loco-backend.vercel.app/', {
+  const socket = io('https://server-quiet-leaf-1362.fly.dev/', {
     reconnection: true,
     reconnectionAttempts: 10,
     reconnectionDelay: 1000,
