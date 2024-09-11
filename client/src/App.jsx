@@ -57,9 +57,13 @@ function App() {
   const [isLocked, setIsLocked] = useState(false)
   useEffect(() => {
 
-    socket.on('connect', () => setIsConnected(true))
+    socket.on('connect', () => {
+      console.log('Connected to server')
+      setIsConnected(true)
+    })
 
     socket.on('syncBoard', (data) => {
+      console.log('Received syncBoard with data:', data)
       setBoard(data.board)
       setTurn(data.turn)
       setActiveSquares(data.activeSquares)
