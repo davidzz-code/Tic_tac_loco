@@ -7,13 +7,15 @@ export default function WinnerModal({ winner, resetGame }) {
 
   return (
     <section className="absolute flex justify-center items-center">
-      <div className="w-96 h-96 flex flex-col justify-between items-center bg-blue-900">
-        <h2 className="mt-16 text-3xl">{winnerText}</h2>
-        <header>
+      <div className="w-96 py-8 flex flex-col justify-between items-center bg-gray-300">
+        <header className="flex items-center gap-x-4">
+          <h2 className="text-3xl text-black">{winnerText}</h2>
           {winner && <Square style="hover:bg-inherit my-4">{winner}</Square>}
         </header>
-        <footer className="w-full flex justify-center p-3">
-          <button onClick={resetGame}>Restart</button>
+        <footer className="w-full mt-8 flex justify-center">
+          <button
+            className="px-3 py-1 border-2 bg-inherit text-black border-black rounded-md hover:bg-gray-800 hover:text-white hover:border-gray-800 transition duration-300"
+            onClick={resetGame}>Restart</button>
         </footer>
       </div>
     </section>
