@@ -54,7 +54,7 @@ function App() {
   })
 
   const [isConnected, setIsConnected] = useState(false)
-  const [isLocked, setIsLocked] = useState(false)
+  // const [isLocked, setIsLocked] = useState(false)
   useEffect(() => {
 
     socket.on('connect', () => {
@@ -69,7 +69,7 @@ function App() {
       setActiveSquares(data.activeSquares)
       setEndGameOpacity(data.endGameOpacity)
       setWinner(data.winner)
-      setIsLocked(false)
+      // setIsLocked(false)
 
       if (data.board) {
         window.localStorage.setItem('board', JSON.stringify(data.board))
@@ -110,9 +110,9 @@ function App() {
 
   function updateBoard(boardIndex, squareIndex) {
     
-    if (isLocked || board[boardIndex][squareIndex] || winner) return
+    if (board[boardIndex][squareIndex] || winner) return
 
-    setIsLocked(true)
+    // setIsLocked(true)
     
     const newBoard = [...board]
     newBoard[boardIndex] = [...newBoard[boardIndex]]
