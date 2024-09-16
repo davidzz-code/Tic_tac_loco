@@ -4,6 +4,7 @@ import { TURNS } from './constants'
 import React, {useState, useEffect} from 'react'
 import Turns from './components/Turns'
 import Board from './components/Board'
+import RoomManager from './components/RoomManager'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
 import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard, redirectMove } from './board'
@@ -44,6 +45,9 @@ function App() {
     }
   })
 
+  const [roomId, setRoomId] = useState('');
+  const [connectedRoom, setConnectedRoom] = useState(false);
+
   const socket = io('https://server-quiet-leaf-1362.fly.dev/', {
     reconnection: true,
     reconnectionAttempts: 10,
@@ -53,13 +57,11 @@ function App() {
     autoConnect: true,
   })
 
-  const [isConnected, setIsConnected] = useState(false)
   // const [isLocked, setIsLocked] = useState(false)
   useEffect(() => {
 
     socket.on('connect', () => {
       console.log('Connected to server')
-      setIsConnected(true)
     })
 
     socket.on('syncBoard', (data) => {
@@ -157,7 +159,7 @@ function App() {
       return;
     }
     socket.emit('syncBoard', {
-      user: socket.id,
+      roomId,
       board: newBoard,
       turn: newTurn,
       activeSquares: newActiveSquares,
@@ -177,11 +179,14 @@ function App() {
           Restart
         </button>
       </header>
-      <section className='w-screen h-screen flex flex-col justify-center items-center'>
-        <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} />
-        <Turns turn={turn} endGameOpacity={endGameOpacity} />
-        <WinnerModal winner={winner} resetGame={resetGame} />
-    </section>
+      <RoomManager socket={socket} setRoomId={setRoomId} setConnectedRoom={setConnectedRoom} />
+      {connectedRoom && (
+        <section className='w-screen h-screen flex flex-col justify-center items-center'>
+          <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} />
+          <Turns turn={turn} endGameOpacity={endGameOpacity} />
+          <WinnerModal winner={winner} resetGame={resetGame} />
+        </section>
+      )}
     </main>
   )
 }
