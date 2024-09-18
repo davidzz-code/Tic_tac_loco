@@ -1,8 +1,11 @@
 import { Server } from 'socket.io'
 import { createServer } from 'node:http'
 import { parse } from 'node:url'
+// import { conifg } from 'dotenv'
+// import OpenAI from "openai"
 
 const port = process.env.PORT ?? 3000
+// const client = new OpenAI(config.env.OPENAI_API_KEY)
 
 const server = createServer((req, res) => {
   const url = parse(req.url, true)
