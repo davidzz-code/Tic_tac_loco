@@ -1,10 +1,11 @@
 import './App.css'
 import { io } from 'socket.io-client'
-import { TURNS } from './constants'
+import { PLAYER_MODES, TURNS } from './constants'
 import React, {useState, useEffect} from 'react'
 import Turns from './components/Turns'
 import Board from './components/Board'
 import RoomManager from './components/RoomManager'
+import PlayerMode from './components/PlayerMode'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
 import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard, redirectMove } from './board'
@@ -45,47 +46,52 @@ function App() {
     }
   })
 
-  const [roomId, setRoomId] = useState('');
-  const [connectedRoom, setConnectedRoom] = useState(false);
+  const [roomId, setRoomId] = useState('')
+  const [connectedRoom, setConnectedRoom] = useState(false)
+  const [isPlayerModeSelected, setIsPlayerModeSelected] = useState(false)
+  const [playerMode, setPlayerMode] = useState('')
+  let socket;
 
-  const socket = io('https://server-quiet-leaf-1362.fly.dev/', {
-    reconnection: true,
-    reconnectionAttempts: 10,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    timeout: 5000,
-    autoConnect: true,
-  })
-
-  // const [isLocked, setIsLocked] = useState(false)
-  useEffect(() => {
-
-    socket.on('connect', () => {
-      console.log('Connected to server')
+  if (isPlayerModeSelected && playerMode === PLAYER_MODES.ONLINE) {
+    socket = io('localhost:3000', {
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 5000,
+      autoConnect: true,
     })
+    
+    // const [isLocked, setIsLocked] = useState(false)
+    useEffect(() => {
 
-    socket.on('syncBoard', (data) => {
-      console.log('Received syncBoard with data:', data)
-      setBoard(data.board)
-      setTurn(data.turn)
-      setActiveSquares(data.activeSquares)
-      setEndGameOpacity(data.endGameOpacity)
-      setWinner(data.winner)
-      // setIsLocked(false)
+      socket.on('connect', () => {
+        console.log('Connected to server')
+      })
 
-      if (data.board) {
-        window.localStorage.setItem('board', JSON.stringify(data.board))
-        window.localStorage.setItem('turn', data.turn)
-        window.localStorage.setItem('active-squares', JSON.stringify(data.activeSquares))
-      } 
-    })
+      socket.on('syncBoard', (data) => {
+        console.log('Received syncBoard with data:', data)
+        setBoard(data.board)
+        setTurn(data.turn)
+        setActiveSquares(data.activeSquares)
+        setEndGameOpacity(data.endGameOpacity)
+        setWinner(data.winner)
+        // setIsLocked(false)
 
-    return () => {
-      socket.off('connect')
-      socket.off('syncBoard')
-    }
-  }, [])
+        if (data.board) {
+          window.localStorage.setItem('board', JSON.stringify(data.board))
+          window.localStorage.setItem('turn', data.turn)
+          window.localStorage.setItem('active-squares', JSON.stringify(data.activeSquares))
+        } 
+      })
 
+      return () => {
+        socket.off('connect')
+        socket.off('syncBoard')
+      }
+    }, [])
+  }
+  
   function resetGame() {
     const blankBoard = Array(9).fill(Array(9).fill(null))
     const blankActiveSquares = Array(9).fill({
@@ -107,7 +113,13 @@ function App() {
     window.localStorage.removeItem('turn')
     window.localStorage.removeItem('active-squares')
 
-    sendBoard(blankBoard, blankTurn, blankActiveSquares, blankEndGameOpacity, blankWinner)
+    socket ? sendBoard(blankBoard, blankTurn, blankActiveSquares, blankEndGameOpacity, blankWinner) : null
+  }
+  
+  function resetPlayerMode() {
+    resetGame()
+    setIsPlayerModeSelected(false)
+    setPlayerMode('')
   }
 
   function updateBoard(boardIndex, squareIndex) {
@@ -149,7 +161,7 @@ function App() {
     const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
     setActiveSquares(newActiveSquares)
 
-    sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner)
+    playerMode === PLAYER_MODES.ONLINE ? sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner) : null
   }
 
   function sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity = null, newWinner = null) {
@@ -170,23 +182,35 @@ function App() {
 
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
-      <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
-        <h2 className="text-xl font-semibold">Tic Tac Loco</h2>
-        <button
-          className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300"
-          onClick={resetGame}
-        >
-          Restart
-        </button>
-      </header>
-      <RoomManager socket={socket} setRoomId={setRoomId} setConnectedRoom={setConnectedRoom} />
-      {connectedRoom && (
-        <section className='w-screen h-screen flex flex-col justify-center items-center'>
-          <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} />
-          <Turns turn={turn} endGameOpacity={endGameOpacity} />
-          <WinnerModal winner={winner} resetGame={resetGame} />
-        </section>
-      )}
+      {isPlayerModeSelected
+        ? (
+          <>
+            <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
+              <h2 className="text-xl font-semibold">Tic Tac Loco</h2>
+              <button
+                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300"
+                onClick={resetGame}
+              >
+                Restart
+              </button>
+              <button
+                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300"
+                onClick={resetPlayerMode}
+              >
+                Change player mode
+              </button>
+            </header>
+            <section className='w-screen h-screen flex flex-col justify-center items-center'>
+              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} />
+              <Turns turn={turn} endGameOpacity={endGameOpacity} />
+              <WinnerModal winner={winner} resetGame={resetGame} />
+            </section>
+          </>
+        )
+        :
+        <PlayerMode setIsPlayerModeSelected={setIsPlayerModeSelected} setPlayerMode={setPlayerMode}></PlayerMode>
+      }
+      {/* <RoomManager socket={socket} setRoomId={setRoomId} setConnectedRoom={setConnectedRoom} /> */}
     </main>
   )
 }
