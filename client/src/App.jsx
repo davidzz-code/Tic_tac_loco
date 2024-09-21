@@ -5,7 +5,7 @@ import React, {useState, useEffect} from 'react'
 import Turns from './components/Turns'
 import Board from './components/Board'
 import RoomManager from './components/RoomManager'
-import PlayerMode from './components/PlayerMode'
+import GameMode from './components/GameMode'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
 import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard, redirectMove } from './board'
@@ -48,11 +48,11 @@ function App() {
 
   const [roomId, setRoomId] = useState('')
   const [connectedRoom, setConnectedRoom] = useState(false)
-  const [isPlayerModeSelected, setIsPlayerModeSelected] = useState(false)
-  const [playerMode, setPlayerMode] = useState('')
+  const [isGameModeSelected, setIsGameModeSelected] = useState(false)
+  const [gameMode, setGameMode] = useState('')
   let socket;
 
-  if (isPlayerModeSelected && playerMode === PLAYER_MODES.ONLINE) {
+  if (isGameModeSelected && gameMode === PLAYER_MODES.ONLINE) {
     socket = io('localhost:3000', {
       reconnection: true,
       reconnectionAttempts: 10,
@@ -116,10 +116,10 @@ function App() {
     socket ? sendBoard(blankBoard, blankTurn, blankActiveSquares, blankEndGameOpacity, blankWinner) : null
   }
   
-  function resetPlayerMode() {
+  function resetGameMode() {
     resetGame()
-    setIsPlayerModeSelected(false)
-    setPlayerMode('')
+    setIsGameModeSelected(false)
+    setGameMode('')
   }
 
   function updateBoard(boardIndex, squareIndex) {
@@ -161,7 +161,7 @@ function App() {
     const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
     setActiveSquares(newActiveSquares)
 
-    playerMode === PLAYER_MODES.ONLINE ? sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner) : null
+    gameMode === PLAYER_MODES.ONLINE ? sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner) : null
   }
 
   function sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity = null, newWinner = null) {
@@ -182,7 +182,7 @@ function App() {
 
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
-      {isPlayerModeSelected
+      {isGameModeSelected
         ? (
           <>
             <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
@@ -195,7 +195,7 @@ function App() {
               </button>
               <button
                 className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300"
-                onClick={resetPlayerMode}
+                onClick={resetGameMode}
               >
                 Change player mode
               </button>
@@ -208,7 +208,7 @@ function App() {
           </>
         )
         :
-        <PlayerMode setIsPlayerModeSelected={setIsPlayerModeSelected} setPlayerMode={setPlayerMode}></PlayerMode>
+        <GameMode setIsGameModeSelected={setIsGameModeSelected} setGameMode={setGameMode}></GameMode>
       }
       {/* <RoomManager socket={socket} setRoomId={setRoomId} setConnectedRoom={setConnectedRoom} /> */}
     </main>

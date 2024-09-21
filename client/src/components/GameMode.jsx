@@ -1,21 +1,24 @@
 import { PLAYER_MODES } from "../constants"
 
-export default function PlayerMode({ setPlayerMode, setIsPlayerModeSelected }) {
+export default function GameMode({ setGameMode, setIsGameModeSelected }) {
   function handleClickSinglePlayer() {
     console.log('Single player mode ON')
-    setIsPlayerModeSelected(true)
-    setPlayerMode(PLAYER_MODES.SINGLE)
+    setIsGameModeSelected(true)
+    setGameMode(PLAYER_MODES.SINGLE)
+    window.localStorage.setItem('gameMode', PLAYER_MODES.SINGLE)
     
   }
   
   function handleClickDoublePlayer() {
     console.log('Double players mode ON')
-    setIsPlayerModeSelected(true)
-    setPlayerMode(PLAYER_MODES.DOUBLE)
+    setIsGameModeSelected(true)
+    setGameMode(PLAYER_MODES.DOUBLE)
+    window.localStorage.setItem('gameMode', PLAYER_MODES.DOUBLE)
   }
 
   function handleClickOnlinePlayer() {
     console.log('Comming soon!')
+    window.localStorage.setItem('gameMode', PLAYER_MODES.ONLINE)
   }
 
   return (
