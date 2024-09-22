@@ -1,6 +1,7 @@
 import './App.css'
 import { io } from 'socket.io-client'
-import { PLAYER_MODES, TURNS } from './constants'
+import OpenAI from 'openai'
+import { GAME_MODES, TURNS } from './constants'
 import React, {useState, useEffect} from 'react'
 import Turns from './components/Turns'
 import Board from './components/Board'
@@ -50,9 +51,34 @@ function App() {
   const [connectedRoom, setConnectedRoom] = useState(false)
   const [isGameModeSelected, setIsGameModeSelected] = useState(false)
   const [gameMode, setGameMode] = useState('')
+  // const client = new OpenAI(process.env.OPENAI_API_KEY)
   let socket;
+  
+  async function sendBoardToChatGPT(newBoard) {
+    try {
+      const response = await fetch('http://localhost:3000/process-board', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ newBoard })
+      })
 
-  if (isGameModeSelected && gameMode === PLAYER_MODES.ONLINE) {
+      // Verifica si la respuesta HTTP es correcta
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      console.log('Tablero actualizado:', data.updatedBoard)
+      setBoard(data.updatedBoard)
+
+    } catch (error) {
+      console.error('Error sending the board to the server on /process-board:', error)
+    }
+  }
+
+  if (isGameModeSelected && gameMode === GAME_MODES.ONLINE) {
     socket = io('localhost:3000', {
       reconnection: true,
       reconnectionAttempts: 10,
@@ -161,7 +187,8 @@ function App() {
     const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
     setActiveSquares(newActiveSquares)
 
-    gameMode === PLAYER_MODES.ONLINE ? sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner) : null
+    gameMode === GAME_MODES.ONLINE ? sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner) : null
+    gameMode === GAME_MODES.SINGLE ? sendBoardToChatGPT(newBoard) : null
   }
 
   function sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity = null, newWinner = null) {
