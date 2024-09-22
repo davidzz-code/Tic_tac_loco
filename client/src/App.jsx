@@ -1,6 +1,5 @@
 import './App.css'
 import { io } from 'socket.io-client'
-import OpenAI from 'openai'
 import { GAME_MODES, TURNS } from './constants'
 import React, {useState, useEffect} from 'react'
 import Turns from './components/Turns'
@@ -70,8 +69,8 @@ function App() {
       }
 
       const data = await response.json()
-      console.log('Tablero actualizado:', data.updatedBoard)
-      setBoard(data.updatedBoard)
+      // console.log('Tablero actualizado:', data.updatedBoard)
+      setBoard(data?.updatedBoard)
 
     } catch (error) {
       console.error('Error sending the board to the server on /process-board:', error)
