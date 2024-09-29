@@ -23,32 +23,41 @@ app.get('/', (req, res) => {
 })
 
 // Nueva ruta para procesar el tablero
-app.post('/process-board', (req, res) => {
-  const newBoard = req.body.newBoard
-  console.log('Tablero recibido:', newBoard)
+app.post('/process-board', async (req, res) => {
+  const newBoard = JSON.stringify(req.body.newBoard)
+  const chatBoard = await getChatResponse(newBoard)
 
-  // Aquí puedes agregar la lógica que quieras para procesar el tablero
-  const chatBoard = getChatResponse(newBoard)
+  console.log('Antes de chat gpt:', newBoard)
+
+  console.log('Después de chat gpt:', chatBoard)
 
   res.json({ chatBoard })
 })
 
-const client = new OpenAI(process.env.OPENAI_API_KEY)
+const client = new OpenAI(process.env.PAID_KEY)
 
 async function getChatResponse(newBoard) {
   const response = await client.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4-turbo",
     messages: [
       { 
         role: "system", 
-        content: "You are an AI that plays an advanced version of tic-tac-toe, where each square contains another tic-tac-toe. The board is a 9-element array, each being a 9-position array for smaller games. Rules: 1. Players play in smaller tic-tac-toes. 2. Winning a smaller game turns that subarray into '✕' or '○'. 3. A move in a smaller tic-tac-toe dictates where the next player must play. 4. The game is won by getting three in a row on the main board with '✕' or '○'. Play strategically, and return only the updated board as an array, with no explanations. Each element should reflect the current state (arrays for smaller games or '✕'/'○' for won ones)." 
+        content: `You are an AI that plays an advanced version of tic-tac-toe, where each square contains another tic-tac-toe. The board is a 9-element array, each element being a 9-position array for smaller games. The rules are as follows:
+        1. You always play as '○', and your opponent plays as '✕'.
+        2. Players take turns in the smaller tic-tac-toes within the main board.
+        3. Winning a smaller game turns that subarray into a '✕' or '○', depending on who won.
+        4. A move in a smaller tic-tac-toe dictates where the next player must play. You must play in the subarray that corresponds to the position of the last move made by your opponent.
+        5. If a subarray is already won or full, you can choose any other available subarray.
+        6. The game is won by getting three in a row on the main board with '✕' or '○'.
+        
+        You are '○' and the opponent is '✕'. Based on the current board, select your move following the rules. Return only the index of the sub-board where you will play (from 0 to 8), and the index within that sub-board where you will place your symbol (from 0 to 8). Return these as an array in the format [sub-board index, sub-board position]. No explanations.`
+        
       },
       { role: "user", content: newBoard }
     ]
   })
 
-  console.log('Chat response:', response.choices[0].message.content)
-  return response.choices[0].message.content
+  return JSON.parse(response.choices[0].message.content)
 }
 
 
