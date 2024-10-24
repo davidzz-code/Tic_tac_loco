@@ -50,33 +50,51 @@ function App() {
   const [connectedRoom, setConnectedRoom] = useState(false)
   const [isGameModeSelected, setIsGameModeSelected] = useState(false)
   const [gameMode, setGameMode] = useState('')
-  // const client = new OpenAI(process.env.OPENAI_API_KEY)
+  const [chatResponse, setChatResponse] = useState(null);
+
   let socket;
+  let isAIProcessing = false
+
+  async function sendBoardToChatGPT(newBoard, userBoardIndex, userSquareIndex) {
+    if (isAIProcessing) return
+    isAIProcessing = true
   
-  async function sendBoardToChatGPT(newBoard) {
     try {
       const response = await fetch('http://localhost:3000/process-board', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ newBoard })
-      })
-
-      // Verifica si la respuesta HTTP es correcta
+        body: JSON.stringify({ newBoard, userBoardIndex, userSquareIndex }),
+      });
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-
+  
       const data = await response.json()
-      // console.log('Tablero actualizado:', data.updatedBoard)
-      setBoard(data?.updatedBoard)
-
+      return data?.chatBoard
+  
     } catch (error) {
       console.error('Error sending the board to the server on /process-board:', error)
+    } finally {
+      isAIProcessing = false
     }
   }
 
+    // La función para enviar el tablero
+    async function handleSendBoard(newBoard, userBoardIndex, userSquareIndex) {
+      const response = await sendBoardToChatGPT(newBoard, userBoardIndex, userSquareIndex);
+      setChatResponse(response);  // Almacena la respuesta en el estado
+    }
+  
+    useEffect(() => {
+      if (chatResponse) {
+        // Aquí puedes actualizar el tablero con la respuesta de ChatGPT
+        updateBoard(chatResponse[0], chatResponse[1]);
+      }
+    }, [chatResponse]); // Solo se ejecuta cuando `chatResponse` cambia
+/*
   if (isGameModeSelected && gameMode === GAME_MODES.ONLINE) {
     socket = io('localhost:3000', {
       reconnection: true,
@@ -116,6 +134,7 @@ function App() {
       }
     }, [])
   }
+  */
   
   function resetGame() {
     const blankBoard = Array(9).fill(Array(9).fill(null))
@@ -147,7 +166,7 @@ function App() {
     setGameMode('')
   }
 
-  function updateBoard(boardIndex, squareIndex) {
+  function updateBoard(boardIndex, squareIndex, isAITurn) {
     
     if (board[boardIndex][squareIndex] || winner) return
 
@@ -157,8 +176,10 @@ function App() {
     newBoard[boardIndex] = [...newBoard[boardIndex]]
     newBoard[boardIndex][squareIndex] = turn
     setBoard(newBoard)
-
+    
+    console.log('Old turn:', turn)
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
+    console.log('Bnew turn:', newTurn)
     setTurn(newTurn)
 
     const smallBoardWinner = checkWinnerSmallBoard(newBoard[boardIndex])
@@ -186,25 +207,28 @@ function App() {
     const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
     setActiveSquares(newActiveSquares)
 
-    gameMode === GAME_MODES.ONLINE ? sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner) : null
-    gameMode === GAME_MODES.SINGLE ? sendBoardToChatGPT(newBoard) : null
+    if (gameMode === GAME_MODES.ONLINE) {
+      sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner);
+    } else if (gameMode === GAME_MODES.SINGLE && newTurn === TURNS.O) {
+      handleSendBoard(newBoard, boardIndex, squareIndex);
+    }
   }
 
-  function sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity = null, newWinner = null) {
-    console.log('socket:', socket)
-    if (!socket.connected) {
-      console.error("Socket no está conectado. No se enviaron los datos.");
-      return;
-    }
-    socket.emit('syncBoard', {
-      roomId,
-      board: newBoard,
-      turn: newTurn,
-      activeSquares: newActiveSquares,
-      endGameOpacity: newEndGameOpacity,
-      winner: newWinner
-    })
-  }
+  // function sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity = null, newWinner = null) {
+  //   console.log('socket:', socket)
+  //   if (!socket.connected) {
+  //     console.error("Socket no está conectado. No se enviaron los datos.");
+  //     return;
+  //   }
+  //   socket.emit('syncBoard', {
+  //     roomId,
+  //     board: newBoard,
+  //     turn: newTurn,
+  //     activeSquares: newActiveSquares,
+  //     endGameOpacity: newEndGameOpacity,
+  //     winner: newWinner
+  //   })
+  // }
 
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
