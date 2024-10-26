@@ -95,7 +95,7 @@ function validateAiMove(newBoard, chatBoard, userSquareIndex) {
 
 // Ruta principal
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('The server works!')
 })
 
 
@@ -122,7 +122,7 @@ const client = new OpenAI(process.env.OPENAI_API_KEY)
 
 async function getChatResponse(newBoard, userBoardIndex, userSquareIndex) {
   const response = await client.chat.completions.create({
-    model: "gpt-4-turbo",
+    model: "gpt-4o",
     messages: [
       { 
         role: "system", 
