@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import express from 'express'
 import OpenAI from 'openai'
 import cors from 'cors'
-import { validateAiMove, getWonSubboards } from './aiMoveValidation'
+import { validateAiMove, getWonSubboards } from './aiMoveValidation.js'
 
 dotenv.config()
 const port = process.env.PORT ?? 3000
