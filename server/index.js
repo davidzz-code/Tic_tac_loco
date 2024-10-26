@@ -98,6 +98,11 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+app.use(cors({
+  origin: '*', // Permite todas las solicitudes de cualquier origen
+  methods: ['GET', 'POST'],
+}));
+
 // Nueva ruta para procesar el tablero
 app.post('/process-board', async (req, res) => {
   const newBoardString = JSON.stringify(req.body.newBoard);
