@@ -118,7 +118,6 @@ function App() {
     window.localStorage.removeItem('board')
     window.localStorage.removeItem('turn')
     window.localStorage.removeItem('active-squares')
-    window.localStorage.removeItem('game-mode')
 
   }
   
@@ -126,6 +125,7 @@ function App() {
     resetGame()
     setIsGameModeSelected(false)
     setGameMode('')
+    window.localStorage.removeItem('game-mode')
   }
 
   function updateBoard(boardIndex, squareIndex) {
