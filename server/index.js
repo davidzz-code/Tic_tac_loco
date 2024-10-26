@@ -122,7 +122,7 @@ const client = new OpenAI(process.env.OPENAI_API_KEY)
 
 async function getChatResponse(newBoard, userBoardIndex, userSquareIndex) {
   const response = await client.chat.completions.create({
-    model: "gpt-4o",
+    model: "gpt-4-turbo",
     messages: [
       { 
         role: "system", 
