@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import express from 'express'
 import OpenAI from 'openai'
 import cors from 'cors'
+import { validateAiMove, getWonSubboards } from './aiMoveValidation'
 
 dotenv.config()
 const port = process.env.PORT ?? 3000
@@ -11,87 +12,11 @@ const port = process.env.PORT ?? 3000
 const app = express()
 app.use(express.json())
 
-// Configurar CORS
 app.use(cors({
-  origin: '*', // Solo permite solicitudes de este origen
+  origin: '*',
   methods: ['GET', 'POST'],
 }))
 
-function getWonSubboards(board) {
-  const wonBoards = [];
-  board.forEach((subBoard, index) => {
-    if (typeof subBoard === 'string') {
-      wonBoards.push(index); // Agrega el índice del subtablero ganado
-    }
-  });
-  return wonBoards.length > 0 ? wonBoards.join(', ') : 'none';
-}
-
-function findFirstValidPosition(board, subBoardIndex) {
-  const subBoard = board[subBoardIndex];
-  
-  for (let i = 0; i < subBoard.length; i++) {
-    if (subBoard[i] === null) { // Asumiendo que las posiciones ocupadas son no nulas
-      return i; // Devuelve la primera posición válida
-    }
-  }
-  
-  return null; // Si no hay posiciones válidas
-}
-
-function validateAiMove(newBoard, chatBoard, userSquareIndex) {
-  const [subBoardIndex, positionIndex] = chatBoard;
-
-  // Verifica si el sub-tablero correspondiente está ganado
-  if (newBoard[userSquareIndex].length > 0 && typeof newBoard[userSquareIndex] === 'string') {
-    console.warn(`El sub-tablero ${userSquareIndex} ya está ganado.`);
-    // Busca la primera posición libre en cualquier sub-tablero disponible
-    const validPosition = findFirstValidPosition(newBoard, subBoardIndex);
-    
-    if (validPosition !== null) {
-      console.log(`Eligiendo posición válida: ${validPosition} en el sub-tablero ${subBoardIndex}`);
-      return [subBoardIndex, validPosition]; // Retorna el sub-tablero y la primera posición válida
-    } else {
-      console.error('No hay posiciones válidas disponibles en el sub-tablero');
-      return null; // Indica que no hay movimientos disponibles
-    }
-  }
-
-  // Verifica si el índice del sub-tablero es correcto
-  if (userSquareIndex !== subBoardIndex) {
-    console.warn(`El índice del sub-tablero es incorrecto. Esperado: ${userSquareIndex}, recibido: ${subBoardIndex}`);
-    
-    // Busca la primera posición libre en el sub-tablero correcto
-    const validPosition = findFirstValidPosition(newBoard, userSquareIndex);
-    
-    if (validPosition !== null) {
-      console.log(`Eligiendo posición válida: ${validPosition} en el sub-tablero ${userSquareIndex}`);
-      return [userSquareIndex, validPosition]; // Retorna el sub-tablero correcto y la primera posición válida
-    } else {
-      console.error('No hay posiciones válidas disponibles en el sub-tablero');
-      return null; // Indica que no hay movimientos disponibles
-    }
-  }
-  
-  // Verifica si la posición elegida por la IA está ocupada
-  if (newBoard[subBoardIndex][positionIndex] !== null) {
-    console.warn(`La posición ${positionIndex} en el sub-tablero ${subBoardIndex} está ocupada.`);
-    
-    // Busca la primera posición libre en el sub-tablero correspondiente
-    const validPosition = findFirstValidPosition(newBoard, subBoardIndex);
-    
-    if (validPosition !== null) {
-      console.log(`Eligiendo posición válida: ${validPosition} en el sub-tablero ${subBoardIndex}`);
-      return [subBoardIndex, validPosition]; // Retorna el sub-tablero y la primera posición válida
-    } else {
-      console.error('No hay posiciones válidas disponibles en el sub-tablero');
-      return null; // Indica que no hay movimientos disponibles
-    }
-  }
-  
-  // Si todo está bien, retorna la jugada original de la IA
-  return chatBoard;
-}
 
 // Ruta principal
 app.get('/', (req, res) => {
@@ -101,22 +26,22 @@ app.get('/', (req, res) => {
 
 // Nueva ruta para procesar el tablero
 app.post('/process-board', async (req, res) => {
-  const newBoardString = JSON.stringify(req.body.newBoard);
-  const newBoard = JSON.parse(newBoardString);
-  const userBoardIndex = req.body.userBoardIndex;
-  const userSquareIndex = req.body.userSquareIndex;
+  const newBoardString = JSON.stringify(req.body.newBoard)
+  const newBoard = JSON.parse(newBoardString)
+  const userBoardIndex = req.body.userBoardIndex
+  const userSquareIndex = req.body.userSquareIndex
 
-  const chatBoard = await getChatResponse(newBoardString, userBoardIndex, userSquareIndex);
+  const chatBoard = await getChatResponse(newBoardString, userBoardIndex, userSquareIndex)
   
   // Valida la respuesta de la IA
-  const validatedMove = validateAiMove(newBoard, chatBoard, userSquareIndex);
+  const validatedMove = validateAiMove(newBoard, chatBoard, userSquareIndex)
 
   if (validatedMove !== null) {
-    return res.json({ chatBoard: validatedMove });
+    return res.json({ chatBoard: validatedMove })
   }
 
-  return res.status(400).json({ error: 'No valid moves available' });
-});
+  return res.status(400).json({ error: 'No valid moves available' })
+})
 
 const client = new OpenAI(process.env.OPENAI_API_KEY)
 
@@ -141,7 +66,6 @@ async function getChatResponse(newBoard, userBoardIndex, userSquareIndex) {
     ]
   })
 
-  console.log('Respuesta de la IA:', response.choices[0].message.content); // Imprimir para depurar
   return JSON.parse(response.choices[0].message.content)
 }
 
