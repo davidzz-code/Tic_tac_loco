@@ -48,7 +48,7 @@ function App() {
   const [gameMode, setGameMode] = useState(() => {
     try {
       const gameModeFromStorage = window.localStorage.getItem('game-mode')
-      return gameModeFromStorage ? JSON.parse(gameModeFromStorage) : ''
+      return gameModeFromStorage ? gameModeFromStorage : ''
     } catch (error) {
       console.error("Error parsing game-mode from storage:", error)
       return ''
