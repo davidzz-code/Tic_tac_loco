@@ -5,6 +5,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected }) {
     console.log('Single player mode ON')
     setIsGameModeSelected(true)
     setGameMode(GAME_MODES.SINGLE)
+    window.localStorage.setItem('is-game-mode-selected', true)
     window.localStorage.setItem('game-mode', GAME_MODES.SINGLE)
   }
   
@@ -12,6 +13,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected }) {
     console.log('Double players mode ON')
     setIsGameModeSelected(true)
     setGameMode(GAME_MODES.DOUBLE)
+    window.localStorage.setItem('is-game-mode-selected', true)
     window.localStorage.setItem('game-mode', GAME_MODES.DOUBLE)
   }
 
