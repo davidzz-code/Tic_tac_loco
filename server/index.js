@@ -98,10 +98,6 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.use(cors({
-  origin: '*', // Permite todas las solicitudes de cualquier origen
-  methods: ['GET', 'POST'],
-}));
 
 // Nueva ruta para procesar el tablero
 app.post('/process-board', async (req, res) => {
@@ -122,7 +118,7 @@ app.post('/process-board', async (req, res) => {
   return res.status(400).json({ error: 'No valid moves available' });
 });
 
-const client = new OpenAI(process.env.PAID_KEY)
+const client = new OpenAI(process.env.OPENAI_API_KEY)
 
 async function getChatResponse(newBoard, userBoardIndex, userSquareIndex) {
   const response = await client.chat.completions.create({
