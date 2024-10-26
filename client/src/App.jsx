@@ -74,7 +74,8 @@ function App() {
       const response = await fetch('https://tic-tac-loco-backend.vercel.app/process-board', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
         body: JSON.stringify({ newBoard, userBoardIndex, userSquareIndex }),
       });
