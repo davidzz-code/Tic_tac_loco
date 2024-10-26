@@ -3,14 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {
-    "@flydotio/dockerfile": "^0.5.8",
-    "vite": "^5.3.4"
+    "@flydotio/dockerfile": "^0.5.8"
   },
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch ./index.js",
-    "build": "vite build"
+    "dev": "node --watch ./index.js"
   },
   "keywords": [],
   "author": "",
