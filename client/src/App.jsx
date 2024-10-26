@@ -205,7 +205,7 @@ function App() {
               </button>
             </header>
             <section className='w-screen h-screen flex flex-col justify-center items-center'>
-              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} />
+              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode}/>
               <Turns turn={turn} endGameOpacity={endGameOpacity} />
               <WinnerModal winner={winner} resetGame={resetGame} />
             </section>

@@ -1,6 +1,6 @@
 import Square from "./Square";
 
-export default function Board({ board, updateBoard, endGameOpacity, activeSquares }) {
+export default function Board({ board, updateBoard, endGameOpacity, activeSquares, gameMode, turn }) {
   const getSquareStyle = (index) => {
     if (index === 4) return 'border-2 border-gray-200'
     if (index === 1 || index === 7) return 'border-x-2 border-gray-200'
@@ -44,6 +44,8 @@ export default function Board({ board, updateBoard, endGameOpacity, activeSquare
                   updateBoard={updateBoard}
                   disableClick={true}
                   style='text-9xl'
+                  gameMode = { gameMode }
+                  turn = { turn }
                 >
                   {smallBoard}
                 </Square>
