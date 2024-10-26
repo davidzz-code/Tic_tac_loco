@@ -60,7 +60,7 @@ function App() {
     isAIProcessing = true
   
     try {
-      const response = await fetch('https://tic-tac-loco.vercel.app/process-board', {
+      const response = await fetch('https://tic-tac-loco-backend.vercel.app/process-board', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
