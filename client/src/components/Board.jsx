@@ -33,6 +33,8 @@ export default function Board({ board, updateBoard, endGameOpacity, activeSquare
                   updateBoard={updateBoard}
                   disableClick={activeSquares[boardIndex].disableClick}
                   style={`${activeSquares[boardIndex].opacity} ${activeSquares[boardIndex].hover} ${getSquareStyle(squareIndex)}`}
+                  gameMode={gameMode}
+                  turn={turn}
                 >
                   {square}
                 </Square>

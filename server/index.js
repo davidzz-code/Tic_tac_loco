@@ -48,14 +48,15 @@ const client = new OpenAI(process.env.OPENAI_API_KEY)
 async function getChatResponse(newBoard, userBoardIndex, userSquareIndex) {
   const response = await client.chat.completions.create({
     model: "gpt-4-turbo",
+    temperature: 0.1,
     messages: [
       { 
         role: "system", 
-        content: `You are an AI that plays an advanced version of tic-tac-toe. Each square contains another tic-tac-toe game. You are '○', and your opponent is '✕'.
-        1. Players take turns.
-        2. A move dictates where the next player must play.
-        3. If a subarray is full or won, choose any available subarray.
-        4. Return only the indices of your move as [sub-board index, sub-board position]. No explanation`
+        content: `You are an AI playing an advanced tic-tac-toe game, aiming to maximize your chances of winning by strategically choosing moves. As "○":
+        1. Prioritize winning any sub-board if possible.
+        2. Block the opponent from winning whenever they are one move away.
+        3. Otherwise, try to play in open spaces with future winning potential.
+        4. Only respond with [sub-board index, sub-board position]. No explanations`
       },
       { role: "user", content: `The current state of the board is: ${JSON.stringify(newBoard)}. 
         The last move was made at position (${userBoardIndex}, ${userSquareIndex}) of the corresponding sub-position. 
