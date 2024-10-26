@@ -44,7 +44,15 @@ function App() {
     }
   })
 
-  const [isGameModeSelected, setIsGameModeSelected] = useState(false)
+  const [isGameModeSelected, setIsGameModeSelected] = useState(() => {
+    try {
+      const gameModeFromStorage = window.localStorage.getItem('is-game-mode-selected')
+      return gameModeFromStorage ? gameModeFromStorage : false
+    } catch (error) {
+      console.error("Error parsing game-mode from storage:", error)
+      return false
+    }
+  })
   const [gameMode, setGameMode] = useState(() => {
     try {
       const gameModeFromStorage = window.localStorage.getItem('game-mode')
@@ -126,6 +134,7 @@ function App() {
     setIsGameModeSelected(false)
     setGameMode('')
     window.localStorage.removeItem('game-mode')
+    window.localStorage.removeItem('is-game-mode-selected')
   }
 
   function updateBoard(boardIndex, squareIndex) {
