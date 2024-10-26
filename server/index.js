@@ -13,7 +13,7 @@ app.use(express.json())
 
 // Configurar CORS
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'http://tic-tac-loco.vercel.app', // Solo permite solicitudes de este origen
   methods: ['GET', 'POST'],
 }))
 
