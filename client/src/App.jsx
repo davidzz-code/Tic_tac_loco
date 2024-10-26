@@ -174,6 +174,10 @@ function App() {
     const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
     setActiveSquares(newActiveSquares)
 
+    window.localStorage.setItem('board', JSON.stringify(newBoard))
+    window.localStorage.setItem('turn', newTurn)
+    window.localStorage.setItem('active-squares', JSON.stringify(newActiveSquares))
+
     if (gameMode === GAME_MODES.SINGLE && newTurn === TURNS.O) {
       handleSendBoard(newBoard, boardIndex, squareIndex);
     }
