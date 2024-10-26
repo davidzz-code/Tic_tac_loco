@@ -1,10 +1,8 @@
 import './App.css'
-import { io } from 'socket.io-client'
 import { GAME_MODES, TURNS } from './constants'
 import React, {useState, useEffect} from 'react'
 import Turns from './components/Turns'
 import Board from './components/Board'
-import RoomManager from './components/RoomManager'
 import GameMode from './components/GameMode'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
@@ -39,20 +37,25 @@ function App() {
     } catch (error) {
       console.error("Error parsing active squares from storage:", error)
       return Array(9).fill({
-        opacity: 'opacity-100',
-        disableClick: false,
-        hover: 'hover:bg-gray-700 hover:cursor-pointer',
+    opacity: 'opacity-100',
+    disableClick: false,
+    hover: 'hover:bg-gray-700 hover:cursor-pointer',
       })
     }
   })
 
-  const [roomId, setRoomId] = useState('')
-  const [connectedRoom, setConnectedRoom] = useState(false)
   const [isGameModeSelected, setIsGameModeSelected] = useState(false)
-  const [gameMode, setGameMode] = useState('')
+  const [gameMode, setGameMode] = useState(() => {
+    try {
+      const gameModeFromStorage = window.localStorage.getItem('game-mode')
+      return gameModeFromStorage ? JSON.parse(gameModeFromStorage) : ''
+    } catch (error) {
+      console.error("Error parsing game-mode from storage:", error)
+      return ''
+    }
+  })
   const [chatResponse, setChatResponse] = useState(null);
 
-  let socket;
   let isAIProcessing = false
 
   async function sendBoardToChatGPT(newBoard, userBoardIndex, userSquareIndex) {
@@ -63,8 +66,7 @@ function App() {
       const response = await fetch('https://tic-tac-loco-backend.vercel.app/process-board', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ newBoard, userBoardIndex, userSquareIndex }),
       });
@@ -86,56 +88,15 @@ function App() {
     // La función para enviar el tablero
     async function handleSendBoard(newBoard, userBoardIndex, userSquareIndex) {
       const response = await sendBoardToChatGPT(newBoard, userBoardIndex, userSquareIndex);
-      setChatResponse(response);  // Almacena la respuesta en el estado
+      setChatResponse(response)
     }
   
     useEffect(() => {
       if (chatResponse) {
         // Aquí puedes actualizar el tablero con la respuesta de ChatGPT
-        updateBoard(chatResponse[0], chatResponse[1]);
+        updateBoard(chatResponse[0], chatResponse[1])
       }
-    }, [chatResponse]); // Solo se ejecuta cuando `chatResponse` cambia
-/*
-  if (isGameModeSelected && gameMode === GAME_MODES.ONLINE) {
-    socket = io('localhost:3000', {
-      reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      timeout: 5000,
-      autoConnect: true,
-    })
-    
-    // const [isLocked, setIsLocked] = useState(false)
-    useEffect(() => {
-
-      socket.on('connect', () => {
-        console.log('Connected to server')
-      })
-
-      socket.on('syncBoard', (data) => {
-        console.log('Received syncBoard with data:', data)
-        setBoard(data.board)
-        setTurn(data.turn)
-        setActiveSquares(data.activeSquares)
-        setEndGameOpacity(data.endGameOpacity)
-        setWinner(data.winner)
-        // setIsLocked(false)
-
-        if (data.board) {
-          window.localStorage.setItem('board', JSON.stringify(data.board))
-          window.localStorage.setItem('turn', data.turn)
-          window.localStorage.setItem('active-squares', JSON.stringify(data.activeSquares))
-        } 
-      })
-
-      return () => {
-        socket.off('connect')
-        socket.off('syncBoard')
-      }
-    }, [])
-  }
-  */
+    }, [chatResponse])
   
   function resetGame() {
     const blankBoard = Array(9).fill(Array(9).fill(null))
@@ -157,8 +118,8 @@ function App() {
     window.localStorage.removeItem('board')
     window.localStorage.removeItem('turn')
     window.localStorage.removeItem('active-squares')
+    window.localStorage.removeItem('game-mode')
 
-    socket ? sendBoard(blankBoard, blankTurn, blankActiveSquares, blankEndGameOpacity, blankWinner) : null
   }
   
   function resetGameMode() {
@@ -167,20 +128,16 @@ function App() {
     setGameMode('')
   }
 
-  function updateBoard(boardIndex, squareIndex, isAITurn) {
+  function updateBoard(boardIndex, squareIndex) {
     
     if (board[boardIndex][squareIndex] || winner) return
-
-    // setIsLocked(true)
     
     const newBoard = [...board]
     newBoard[boardIndex] = [...newBoard[boardIndex]]
     newBoard[boardIndex][squareIndex] = turn
     setBoard(newBoard)
     
-    console.log('Old turn:', turn)
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
-    console.log('Bnew turn:', newTurn)
     setTurn(newTurn)
 
     const smallBoardWinner = checkWinnerSmallBoard(newBoard[boardIndex])
@@ -208,28 +165,10 @@ function App() {
     const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
     setActiveSquares(newActiveSquares)
 
-    if (gameMode === GAME_MODES.ONLINE) {
-      sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity, newWinner);
-    } else if (gameMode === GAME_MODES.SINGLE && newTurn === TURNS.O) {
+    if (gameMode === GAME_MODES.SINGLE && newTurn === TURNS.O) {
       handleSendBoard(newBoard, boardIndex, squareIndex);
     }
   }
-
-  // function sendBoard(newBoard, newTurn, newActiveSquares, newEndGameOpacity = null, newWinner = null) {
-  //   console.log('socket:', socket)
-  //   if (!socket.connected) {
-  //     console.error("Socket no está conectado. No se enviaron los datos.");
-  //     return;
-  //   }
-  //   socket.emit('syncBoard', {
-  //     roomId,
-  //     board: newBoard,
-  //     turn: newTurn,
-  //     activeSquares: newActiveSquares,
-  //     endGameOpacity: newEndGameOpacity,
-  //     winner: newWinner
-  //   })
-  // }
 
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
@@ -261,7 +200,6 @@ function App() {
         :
         <GameMode setIsGameModeSelected={setIsGameModeSelected} setGameMode={setGameMode}></GameMode>
       }
-      {/* <RoomManager socket={socket} setRoomId={setRoomId} setConnectedRoom={setConnectedRoom} /> */}
     </main>
   )
 }
