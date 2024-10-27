@@ -1,4 +1,5 @@
 import { GAME_MODES } from "../constants"
+import { XIcon, CircleIcon, UserIcon, CpuIcon } from "lucide-react"
 
 export default function GameMode({ setGameMode, setIsGameModeSelected }) {
   function handleClickSinglePlayer() {
@@ -18,24 +19,59 @@ export default function GameMode({ setGameMode, setIsGameModeSelected }) {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col justify-center items-center bg-[#242424] text-[#F0F0F0] relative">
-      <h2 className="text-7xl font-bold tracking-widest mb-12 text-[#CA8A03] z-10">
-        Tic Tac Loco
-      </h2>
-      <div className="flex flex-col space-y-8 z-10">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#242424] text-white p-4 relative">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 transform -translate-x-1/2 -translate-y-1/2 opacity-10">
+          <XIcon size={200} className="text-[#EF4444]" />
+        </div>
+        <div className="absolute bottom-1/4 right-1/2 md:right-1/4 transform translate-x-1/2 translate-y-1/2 opacity-10">
+          <CircleIcon size={200} className="text-[#3C82F6]" />
+        </div>
+      </div>
+  
+      <h1 className="text-5xl md:text-6xl font-bold mb-8 text-center z-10">
+        {["T", "i", "c", " ", "T", "a", "c", " ", "L", "o", "c", "o"].map((char, index) => (
+          <span
+            key={index}
+            className={`inline-block transition-colors duration-50 ${
+              index % 2 === 0 ? "hover:text-[#EF4444]" : "hover:text-[#3C82F6]"
+            }`}
+          >
+            {char}
+          </span>
+        ))}
+      </h1>
+      
+      <div className="flex flex-row gap-6 w-full max-w-xl items-center justify-center z-10">
         <button 
-          onClick={handleClickSinglePlayer} 
-          className="flex items-center justify-center px-10 py-3 text-lg rounded-md bg-transparent text-[#F0F0F0] border-2 border-white hover:border-[#3c82f6] transition-all duration-200"
+          onClick={handleClickDoublePlayer}
+          className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
         >
-          {GAME_MODES.SINGLE}
+          <div className="flex flex-col items-center">
+            <UserIcon className="h-10 w-10 mb-1" />
+            <span className="text-sm font-semibold">Player</span>
+          </div>
+          <span className="mx-3 text-xl font-bold group-hover:text-[#3C82F6] transition-colors duration-200">VS</span>
+          <div className="flex flex-col items-center">
+            <UserIcon className="h-10 w-10 mb-1" />
+            <span className="text-sm font-semibold">Player</span>
+          </div>
         </button>
         <button 
-          onClick={handleClickDoublePlayer} 
-          className="flex items-center justify-center px-10 py-3 text-lg rounded-md bg-transparent text-[#F0F0F0] border-2 border-white hover:border-[#ef4444] transition-all duration-200"
+          onClick={handleClickSinglePlayer}
+          className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
         >
-          {GAME_MODES.DOUBLE}
+          <div className="flex flex-col items-center">
+            <UserIcon className="h-10 w-10 mb-1" />
+            <span className="text-sm font-semibold">Player</span>
+          </div>
+          <span className="mx-3 text-xl font-bold group-hover:text-[#EF4444] transition-colors duration-200">VS</span>
+          <div className="flex flex-col items-center">
+            <CpuIcon className="h-8 w-8 md:h-10 md:w-10 mb-1" />
+            <span className="text-sm font-semibold">AI</span>
+          </div>
         </button>
       </div>
     </div>
-  );
+  )
 }
