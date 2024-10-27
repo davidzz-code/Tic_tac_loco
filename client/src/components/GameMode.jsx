@@ -33,7 +33,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected }) {
         {["T", "i", "c", " ", "T", "a", "c", " ", "L", "o", "c", "o"].map((char, index) => (
           <span
             key={index}
-            className={`inline-block transition-colors duration-50 ${
+            className={`inline-block ${
               index % 2 === 0 ? "hover:text-[#EF4444]" : "hover:text-[#3C82F6]"
             }`}
           >
@@ -45,7 +45,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected }) {
       <div className="flex flex-row gap-6 w-full max-w-xl items-center justify-center z-10">
         <button 
           onClick={handleClickDoublePlayer}
-          className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+          className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
         >
           <div className="flex flex-col items-center">
             <UserIcon className="h-10 w-10 mb-1" />
@@ -59,7 +59,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected }) {
         </button>
         <button 
           onClick={handleClickSinglePlayer}
-          className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+          className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
         >
           <div className="flex flex-col items-center">
             <UserIcon className="h-10 w-10 mb-1" />

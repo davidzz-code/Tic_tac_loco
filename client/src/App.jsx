@@ -208,7 +208,7 @@ function App() {
           <section className="flex flex-col justify-center items-center w-full h-full">
             <div className="flex flex-col items-center w-full max-w-md md:max-w-full">
               <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode} />
-              <Turns turn={turn} endGameOpacity={endGameOpacity} />
+              <Turns turn={turn} endGameOpacity={endGameOpacity} gameMode={gameMode} />
               <WinnerModal winner={winner} resetGame={resetGame} />
             </div>
           </section>
