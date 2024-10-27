@@ -16,8 +16,10 @@ export default function Square({ children, boardIndex, squareIndex, updateBoard,
   }
   return (
     <div
-      className={`${getColor(children)} h-full font-bold aspect-square flex justify-center items-center text-5xl rounded-none ${style} ${selectedStyle}`}
+      className={`${getColor(children)} h-full font-bold aspect-square flex justify-center items-center text-3xl md:text-5xl rounded-none ${style} ${selectedStyle}`}
       onClick={handleClick}
-    >{children}</div>
-  )
+    >
+      {children}
+    </div>
+  );
 } 

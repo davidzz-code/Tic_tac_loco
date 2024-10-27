@@ -186,34 +186,36 @@ function App() {
 
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
-      {isGameModeSelected
-        ? (
-          <>
-            <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
-              <h2 className="text-xl font-semibold">Tic Tac Loco</h2>
+      {isGameModeSelected ? (
+        <>
+          <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
+            <h2 className="text-2xl font-semibold md:text-3xl">Tic Tac Loco</h2>
+            <div className="flex space-x-2">
               <button
-                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300"
+                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
                 onClick={resetGame}
               >
                 Restart
               </button>
               <button
-                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300"
+                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
                 onClick={resetGameMode}
               >
-                Change player mode
+                Main menu
               </button>
-            </header>
-            <section className='w-screen h-screen flex flex-col justify-center items-center'>
-              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode}/>
+            </div>
+          </header>
+          <section className="flex flex-col justify-center items-center w-full h-full">
+            <div className="flex flex-col items-center w-full max-w-md md:max-w-full">
+              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode} />
               <Turns turn={turn} endGameOpacity={endGameOpacity} />
               <WinnerModal winner={winner} resetGame={resetGame} />
-            </section>
-          </>
-        )
-        :
-        <GameMode setIsGameModeSelected={setIsGameModeSelected} setGameMode={setGameMode}></GameMode>
-      }
+            </div>
+          </section>
+        </>
+      ) : (
+        <GameMode setIsGameModeSelected={setIsGameModeSelected} setGameMode={setGameMode} />
+      )}
     </main>
   )
 }

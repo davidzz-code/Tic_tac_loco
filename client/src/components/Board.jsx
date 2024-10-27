@@ -45,7 +45,7 @@ export default function Board({ board, updateBoard, endGameOpacity, activeSquare
                   boardIndex={boardIndex}
                   updateBoard={updateBoard}
                   disableClick={true}
-                  style='text-9xl'
+                  style='text-8xl md:text-9xl'
                   gameMode = { gameMode }
                   turn = { turn }
                 >
