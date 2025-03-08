@@ -6,10 +6,12 @@ import Board from './components/Board'
 import GameMode from './components/GameMode'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
+import HowToPlay from './components/HowToPlay'
 import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard, redirectMove } from './board'
 
 
 function App() {
+  const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false)
   const [board, setBoard] = useState(() => {
     try {
       const boardFromStorage = window.localStorage.getItem('board')
@@ -186,6 +188,9 @@ function App() {
 
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
+      {isHowToPlayOpen && (
+        <HowToPlay setIsHowToPlayOpen={setIsHowToPlayOpen}/>
+      )}
       {isGameModeSelected ? (
         <>
           <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
@@ -203,6 +208,12 @@ function App() {
               >
                 Main menu
               </button>
+              <button
+                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
+                onClick={() => setIsHowToPlayOpen(true)}
+              >
+                How to play
+              </button>
             </div>
           </header>
           <section className="flex flex-col justify-center items-center w-full h-full">
@@ -214,7 +225,7 @@ function App() {
           </section>
         </>
       ) : (
-        <GameMode setIsGameModeSelected={setIsGameModeSelected} setGameMode={setGameMode} />
+        <GameMode setIsGameModeSelected={setIsGameModeSelected} setGameMode={setGameMode} setIsHowToPlayOpen={setIsHowToPlayOpen}/>
       )}
     </main>
   )
