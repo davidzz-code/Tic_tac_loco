@@ -7,7 +7,6 @@ export default function HowToPlay({ setIsHowToPlayOpen }) {
     {
       emoji: '🎯',
       title: 'Objetivo',
-      text: 'Ganar el tres en raya en el tablero grande.',
       text: 'El jugador que gane el tres en raya en el tablero grande ganará el juego.',
       imgSrc: ['/src/assets/how_to_play_1.png'],
     },
@@ -24,8 +23,8 @@ export default function HowToPlay({ setIsHowToPlayOpen }) {
       imgSrc: ['/src/assets/how_to_play_3.png', '/src/assets/how_to_play_4.png'],
     },
     {
-      emoji: '🔄',
-      title: 'Reglas de los turnos',
+      emoji: '⚡',
+      title: 'Regla especial - Turnos',
       text: 'Tu movimiento decide dónde jugará tu oponente en el siguiente turno',
       secondText: 'Al colocar tu símbolo en un espacio de un tres en raya pequeño, tu rival deberá jugar en el tres en raya que ocupa esa misma posición dentro del tablero grande.',
       imgSrc: ['/src/assets/how_to_play_5.png', '/src/assets/how_to_play_6.png'],
