@@ -29,7 +29,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
             className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
             onClick={openHowToPlay}
           >
-            How to play
+            Cómo jugar
           </button>
         </header>
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#242424] text-white p-4 relative">
@@ -59,30 +59,30 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
         <div className="flex flex-row gap-6 w-full max-w-xl items-center justify-center z-10">
           <button 
             onClick={handleClickDoublePlayer}
-            className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+            className="w-42 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
           >
             <div className="flex flex-col items-center">
               <UserIcon className="h-10 w-10 mb-1" />
-              <span className="text-sm font-semibold">Player</span>
+              <span className="text-sm font-semibold">Jugador</span>
             </div>
             <span className="mx-3 text-xl font-bold group-hover:text-[#3C82F6] transition-colors duration-200">VS</span>
             <div className="flex flex-col items-center">
               <UserIcon className="h-10 w-10 mb-1" />
-              <span className="text-sm font-semibold">Player</span>
+              <span className="text-sm font-semibold">Jugador</span>
             </div>
           </button>
           <button 
             onClick={handleClickSinglePlayer}
-            className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+            className="w-42 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
           >
             <div className="flex flex-col items-center">
               <UserIcon className="h-10 w-10 mb-1" />
-              <span className="text-sm font-semibold">Player</span>
+              <span className="text-sm font-semibold">Jugador</span>
             </div>
             <span className="mx-3 text-xl font-bold group-hover:text-[#EF4444] transition-colors duration-200">VS</span>
             <div className="flex flex-col items-center">
               <CpuIcon className="h-8 w-8 md:h-10 md:w-10 mb-1" />
-              <span className="text-sm font-semibold">AI</span>
+              <span className="text-sm font-semibold">IA</span>
             </div>
           </button>
         </div>

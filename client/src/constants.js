@@ -15,6 +15,6 @@ export const WINNER_COMBOS = [
 ]
 
 export const GAME_MODES = {
-  SINGLE: 'Player VS Computer',
-  DOUBLE: 'Player VS Player'
+  SINGLE: 'Jugador VS IA',
+  DOUBLE: 'Jugador VS Jugador'
 }

@@ -200,19 +200,19 @@ function App() {
                 className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
                 onClick={resetGame}
               >
-                Restart
+                Reiniciar
               </button>
               <button
                 className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
                 onClick={resetGameMode}
               >
-                Main menu
+                Menú principal
               </button>
               <button
                 className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
                 onClick={() => setIsHowToPlayOpen(true)}
               >
-                How to play
+                Cómo jugar
               </button>
             </div>
           </header>

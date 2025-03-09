@@ -50,13 +50,12 @@ export default function HowToPlay({ setIsHowToPlayOpen }) {
   }
 
   const hasTwoImages = slides[currentSlide].imgSrc.length === 2;
-  // const modalWidth = hasTwoImages ? 'max-w-3xl' : 'max-w-md';
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-80 flex justify-center items-center z-50">
       <div className={`bg-[#242424] border-2 border-white p-6 rounded-lg mx-6 w-full max-w-xl`}>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-sm font-semibold text-center">How to Play</h2>
+          <h2 className="text-sm font-semibold text-center">Cómo jugar</h2>
           <button onClick={closeHowToPlay} className="text-md px-4 py-2 font-bold">X</button>
         </div>
 
