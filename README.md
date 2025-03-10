@@ -59,3 +59,7 @@ Este proyecto está construido usando React, Vite y Tailwind CSS. Cuenta con mod
 ## Contribuciones
 
 Las contribuciones son bienvenidas! Abre un issue o envía un pull request para cualquier mejora o corrección de errores.
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT.
