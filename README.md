@@ -4,8 +4,8 @@ Tic Tac Loco es una versión moderna del clásico juego de "*Tic Tac Toe*" o "*T
 
 Este proyecto está construido usando React, Vite y Tailwind CSS. Cuenta con modos de un jugador y multijugador, con un oponente de IA impulsado por ChatGPT a través de la API de OpenAI.
 
-![Vista previa del menú principal](client/src/assets/menu_mokup.webp)
-![Vista previa del juego](client/src/assets/game_mokup.webp)
+![Vista previa del menú principal](/client/src/assets/menu_mockup.webp)
+![Vista previa del juego](/client/src/assets/game_mockup.webp)
 
 ## Tabla de Contenidos
 
