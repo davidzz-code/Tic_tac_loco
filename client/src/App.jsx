@@ -194,19 +194,18 @@ function App() {
       {isGameModeSelected ? (
         <>
           <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
-            <h2 className="text-2xl font-semibold md:text-3xl">Tic Tac Loco</h2>
+            <button
+              className="bg-[#242424] hover:border hover:border-white transition duration-300 text-sm md:text-base"
+              onClick={resetGameMode}
+            >
+              <h2 className="text-2xl font-semibold md:text-3xl">Tic Tac Loco</h2>
+            </button>
             <div className="flex space-x-2">
               <button
                 className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
                 onClick={resetGame}
               >
                 Reiniciar
-              </button>
-              <button
-                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
-                onClick={resetGameMode}
-              >
-                Menú principal
               </button>
               <button
                 className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"

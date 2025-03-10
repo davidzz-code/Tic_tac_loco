@@ -24,14 +24,14 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
 
   return (
     <>
-      <header className='w-full absolute top-0 flex justify-end px-4 py-2'>
+      <header className='w-full absolute top-0 flex justify-end px-4 py-2 z-30'>
           <button
             className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
             onClick={openHowToPlay}
           >
             Cómo jugar
           </button>
-        </header>
+      </header>
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#242424] text-white p-4 relative">
         
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
