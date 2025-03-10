@@ -1,6 +1,8 @@
 # Tic Tac Loco
 
-Tic Tac Loco es una versión moderna del clásico juego de Tic Tac Toe o Tres en raya en español. Este proyecto está construido usando React, Vite y Tailwind CSS. Cuenta con modos de un jugador y multijugador, con un oponente de IA impulsado por ChatGPT a través de la API de OpenAI.
+Tic Tac Loco es una versión moderna del clásico juego de "*Tic Tac Toe*" o "*Tres en raya*" en español. Se trata de una versión mucho más complicada y estratégica, que ofrece una experiencia de juego más desafiante.
+
+Este proyecto está construido usando React, Vite y Tailwind CSS. Cuenta con modos de un jugador y multijugador, con un oponente de IA impulsado por ChatGPT a través de la API de OpenAI.
 
 ## Tabla de Contenidos
 
