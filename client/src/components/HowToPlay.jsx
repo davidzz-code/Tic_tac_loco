@@ -8,32 +8,32 @@ export default function HowToPlay({ setIsHowToPlayOpen }) {
       emoji: '🎯',
       title: 'Objetivo',
       text: 'El jugador que consiga el tres en raya en el tablero grande ganará el juego.',
-      imgSrc: ['../assets/how_to_play_1.png'],
+      imgSrc: ['/client/src/assets/how_to_play_1.png'],
     },
     {
       emoji: '📍',
       title: '¿Cómo ganar?',
       text: 'Los tres en raya pequeños funcionan igual que el juego original',
-      imgSrc: ['../assets/how_to_play_2.png'],
+      imgSrc: ['/client/src/assets/how_to_play_2.png'],
     },
     {
       emoji: '📍',
       title: '¿Cómo ganar?',
       text: 'Cuando ganas un tres en raya pequeño, ese espacio en el tablero se bloquea con tu símbolo',
-      imgSrc: ['../assets/how_to_play_3.png', '../assets/how_to_play_4.png'],
+      imgSrc: ['/client/src/assets/how_to_play_3.png', '/client/src/assets/how_to_play_4.png'],
     },
     {
       emoji: '⚡',
       title: 'Regla especial - Turnos',
       text: 'Tu movimiento decide dónde jugará tu oponente en el siguiente turno',
       secondText: 'Al colocar tu símbolo en un espacio de un tres en raya pequeño, tu rival deberá jugar en el tres en raya que ocupa esa misma posición dentro del tablero grande.',
-      imgSrc: ['../assets/how_to_play_5.png', '../assets/how_to_play_6.png'],
+      imgSrc: ['/client/src/assets/how_to_play_5.png', '/client/src/assets/how_to_play_6.png'],
     },
     {
       emoji: '🎲',
       title: 'Juega donde quieras',
       text: 'Si tu oponente te envía a jugar en una casilla de tres en raya que ya ha sido ganada, puedes elegir cualquier casilla libre del tablero grande.',
-      imgSrc: ['../assets/how_to_play_7.png', '../assets/how_to_play_8.png'],
+      imgSrc: ['/client/src/assets/how_to_play_7.png', '/client/src/assets/how_to_play_8.png'],
     },
   ];
 
