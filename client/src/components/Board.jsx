@@ -35,6 +35,7 @@ export default function Board({ board, updateBoard, endGameOpacity, activeSquare
                   style={`${activeSquares[boardIndex].opacity} ${activeSquares[boardIndex].hover} ${getSquareStyle(squareIndex)}`}
                   gameMode={gameMode}
                   turn={turn}
+                  animateMark
                 >
                   {square}
                 </Square>
@@ -45,9 +46,10 @@ export default function Board({ board, updateBoard, endGameOpacity, activeSquare
                   boardIndex={boardIndex}
                   updateBoard={updateBoard}
                   disableClick={true}
-                  style='text-8xl md:text-9xl'
+                  style=''
                   gameMode = { gameMode }
                   turn = { turn }
+                  animateMark
                 >
                   {smallBoard}
                 </Square>
