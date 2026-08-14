@@ -2,94 +2,86 @@ import { Server } from 'socket.io'
 import { createServer } from 'node:http'
 import dotenv from 'dotenv'
 import express from 'express'
-import OpenAI from 'openai'
 import cors from 'cors'
-import { validateAiMove, getWonSubboards } from './aiMoveValidation.js'
 
 dotenv.config()
 const port = process.env.PORT ?? 3000
 
 const app = express()
 app.use(express.json())
+app.use(cors({ origin: '*', methods: ['GET', 'POST'] }))
 
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST'],
-}))
-
-
-// Ruta principal
 app.get('/', (req, res) => {
-  res.send('The server works!')
+  res.send('Tic Tac Loco server is running')
 })
 
-
-// Nueva ruta para procesar el tablero
-app.post('/process-board', async (req, res) => {
-  const newBoardString = JSON.stringify(req.body.newBoard)
-  const newBoard = JSON.parse(newBoardString)
-  const userBoardIndex = req.body.userBoardIndex
-  const userSquareIndex = req.body.userSquareIndex
-
-  const chatBoard = await getChatResponse(newBoardString, userBoardIndex, userSquareIndex)
-  
-  // Valida la respuesta de la IA
-  const validatedMove = validateAiMove(newBoard, chatBoard, userSquareIndex)
-
-  if (validatedMove !== null) {
-    return res.json({ chatBoard: validatedMove })
-  }
-
-  return res.status(400).json({ error: 'No valid moves available' })
-})
-
-const client = new OpenAI(process.env.OPENAI_API_KEY)
-
-async function getChatResponse(newBoard, userBoardIndex, userSquareIndex) {
-  const response = await client.chat.completions.create({
-    model: "gpt-4-turbo",
-    temperature: 0.1,
-    messages: [
-      { 
-        role: "system", 
-        content: `You are an AI playing an advanced tic-tac-toe game, aiming to maximize your chances of winning by strategically choosing moves. As "○":
-        1. Prioritize winning any sub-board if possible.
-        2. Block the opponent from winning whenever they are one move away.
-        3. Otherwise, try to play in open spaces with future winning potential.
-        4. Only respond with [sub-board index, sub-board position]. No explanations`
-      },
-      { role: "user", content: `The current state of the board is: ${JSON.stringify(newBoard)}. 
-        The last move was made at position (${userBoardIndex}, ${userSquareIndex}) of the corresponding sub-position. 
-        The following sub-boards have been won: ${getWonSubboards(JSON.parse(newBoard))}. 
-        You cannot play in the won sub-boards. 
-        Please choose your move in one of these available sub-boards.`
-      }
-    ]
-  })
-
-  return JSON.parse(response.choices[0].message.content)
-}
-
-
-// Crear servidor HTTP y asociarlo a express
 const server = createServer(app)
 
-// Configurar socket.io
 const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST'],
-  },
+  cors: { origin: '*', methods: ['GET', 'POST'] },
 })
+
+const HOST_SYMBOL = '✕'
+const GUEST_SYMBOL = '○'
+
+// roomId -> { players: string[] }
+const rooms = new Map()
+
+function leaveRoom(socket) {
+  const roomId = socket.data.roomId
+  if (!roomId) return
+
+  const room = rooms.get(roomId)
+  if (room) {
+    room.players = room.players.filter((id) => id !== socket.id)
+    socket.to(roomId).emit('opponentLeft')
+    if (room.players.length === 0) rooms.delete(roomId)
+  }
+  socket.leave(roomId)
+  socket.data.roomId = null
+}
 
 io.on('connection', (socket) => {
-  socket.on('syncBoard', (data) => {
-    console.log('Received syncBoard with data:', data.turn)
-    socket.broadcast.emit('syncBoard', data)
+  socket.on('createRoom', (roomId) => {
+    if (rooms.has(roomId)) {
+      socket.emit('roomError', { message: 'Esa sala ya existe, prueba otra.' })
+      return
+    }
+    rooms.set(roomId, { players: [socket.id] })
+    socket.join(roomId)
+    socket.data.roomId = roomId
+    socket.emit('roomCreated', { roomId, symbol: HOST_SYMBOL })
   })
+
+  socket.on('joinRoom', (roomId) => {
+    const room = rooms.get(roomId)
+    if (!room) {
+      socket.emit('roomError', { message: 'La sala no existe.' })
+      return
+    }
+    if (room.players.length >= 2) {
+      socket.emit('roomError', { message: 'La sala está llena.' })
+      return
+    }
+    room.players.push(socket.id)
+    socket.join(roomId)
+    socket.data.roomId = roomId
+    socket.emit('roomJoined', { roomId, symbol: GUEST_SYMBOL })
+    io.to(roomId).emit('startGame')
+  })
+
+  socket.on('move', ({ roomId, boardIndex, squareIndex }) => {
+    socket.to(roomId).emit('opponentMove', { boardIndex, squareIndex })
+  })
+
+  socket.on('resetGame', ({ roomId }) => {
+    socket.to(roomId).emit('opponentReset')
+  })
+
+  socket.on('leaveRoom', () => leaveRoom(socket))
+  socket.on('disconnect', () => leaveRoom(socket))
 })
 
-// Iniciar el servidor
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })

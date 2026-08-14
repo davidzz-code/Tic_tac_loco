@@ -16,7 +16,8 @@ export const WINNER_COMBOS = [
 
 export const GAME_MODES = {
   SINGLE: 'Jugador VS IA',
-  DOUBLE: 'Jugador VS Jugador'
+  DOUBLE: 'Jugador VS Jugador',
+  ONLINE: 'Online'
 }
 
 export const DIFFICULTY = {

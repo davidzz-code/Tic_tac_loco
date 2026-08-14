@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { GAME_MODES, DIFFICULTY, DIFFICULTY_LABELS } from "../constants"
-import { XIcon, CircleIcon, UserIcon, CpuIcon } from "lucide-react"
+import { XIcon, CircleIcon, UserIcon, CpuIcon, GlobeIcon } from "lucide-react"
 
 const DIFFICULTY_ORDER = [DIFFICULTY.EASY, DIFFICULTY.MEDIUM, DIFFICULTY.HARD]
 
@@ -22,6 +22,10 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
 
   function handleClickDoublePlayer() {
     startGame(GAME_MODES.DOUBLE)
+  }
+
+  function handleClickOnline() {
+    startGame(GAME_MODES.ONLINE)
   }
 
   function handleSelectDifficulty(level) {
@@ -86,10 +90,10 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
             </button>
           </div>
         ) : (
-          <div className="flex flex-row gap-6 w-full max-w-xl items-center justify-center z-10">
+          <div className="flex flex-row flex-wrap gap-6 w-full max-w-2xl items-center justify-center z-10">
             <button
               onClick={handleClickDoublePlayer}
-              className="w-42 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+              className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
             >
               <div className="flex flex-col items-center">
                 <UserIcon className="h-10 w-10 mb-1" />
@@ -103,7 +107,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
             </button>
             <button
               onClick={() => setChoosingDifficulty(true)}
-              className="w-42 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+              className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
             >
               <div className="flex flex-col items-center">
                 <UserIcon className="h-10 w-10 mb-1" />
@@ -114,6 +118,13 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
                 <CpuIcon className="h-8 w-8 md:h-10 md:w-10 mb-1" />
                 <span className="text-sm font-semibold">IA</span>
               </div>
+            </button>
+            <button
+              onClick={handleClickOnline}
+              className="w-40 h-32 flex flex-col items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+            >
+              <GlobeIcon className="h-10 w-10 mb-2 group-hover:text-[#3C82F6] transition-colors duration-200" />
+              <span className="text-sm font-semibold">Online</span>
             </button>
           </div>
         )}
