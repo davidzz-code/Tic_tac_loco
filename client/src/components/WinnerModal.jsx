@@ -10,7 +10,7 @@ export default function WinnerModal({ winner, resetGame }) {
       <div className="w-96 py-8 flex flex-col justify-between items-center bg-[#343434] rounded-md border-2 border-white">
         <header className="flex items-center gap-x-4">
           <h2 className="text-3xl text-white">{winnerText}</h2>
-          {winner && <Square style="hover:bg-inherit my-4">{winner}</Square>}
+          {winner && <Square style="hover:bg-inherit my-4 w-20 h-20" animateMark>{winner}</Square>}
         </header>
         <footer className="w-full mt-8 flex justify-center">
           <button

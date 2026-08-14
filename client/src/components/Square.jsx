@@ -1,13 +1,9 @@
 import { GAME_MODES, TURNS } from '../constants'
+import Mark from './Mark'
 
-export default function Square({ children, boardIndex, squareIndex, updateBoard, isSelected, disableClick = true, style, opacity = 'opacity-100', gameMode, turn }) {
+export default function Square({ children, boardIndex, squareIndex, updateBoard, isSelected, disableClick = true, style, opacity = 'opacity-100', gameMode, turn, animateMark = false }) {
   const selectedStyle = isSelected ? '' : `${opacity}`
 
-    const getColor = (value) => {
-      if (value === TURNS.X) return 'text-red-500'
-      if (value === TURNS.O) return 'text-blue-500'
-      return ''
-    };
   function handleClick() {
     if (!disableClick) {
       if (gameMode === GAME_MODES.SINGLE && turn === TURNS.O) return
@@ -16,10 +12,10 @@ export default function Square({ children, boardIndex, squareIndex, updateBoard,
   }
   return (
     <div
-      className={`${getColor(children)} h-full font-bold aspect-square flex justify-center items-center text-3xl md:text-5xl rounded-none ${style} ${selectedStyle}`}
+      className={`h-full font-bold aspect-square flex justify-center items-center rounded-none ${style} ${selectedStyle}`}
       onClick={handleClick}
     >
-      {children}
+      <Mark value={children} animate={animateMark} />
     </div>
   );
-} 
+}
