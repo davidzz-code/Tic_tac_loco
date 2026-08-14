@@ -2,24 +2,22 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {
-    "@flydotio/dockerfile": "^0.5.8"
-  },
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
     "dev": "node --watch ./index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Tic Tac Loco realtime game server (Socket.io)",
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.8"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "4.22.0",
-    "morgan": "1.11.0",
-    "openai": "^4.63.0",
     "socket.io": "4.7.5"
   }
 }
