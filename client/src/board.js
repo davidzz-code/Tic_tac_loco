@@ -52,7 +52,7 @@ export function redirectMove(newBoard, squareIndex, activeSquares) {
   const activeSquaresStyle = {
     opacity: 'opacity-100',
     disableClick: false,
-    hover: 'hover:bg-gray-700 hover:cursor-pointer',
+    hover: 'hover:cursor-pointer',
   }
 
   return activeSquares.map((_, index) => {

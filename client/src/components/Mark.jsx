@@ -12,7 +12,7 @@ const LINE_CAP = 'round'
 // Renders an X or O as an SVG that "draws itself" (stroke animation),
 // like sketching on paper. `animate={false}` shows it fully drawn (static),
 // used for the turn indicator.
-export default function Mark({ value, animate = false }) {
+export default function Mark({ value, animate = false, className = '' }) {
   if (value !== TURNS.X && value !== TURNS.O) return null
 
   const isX = value === TURNS.X
@@ -21,7 +21,7 @@ export default function Mark({ value, animate = false }) {
   return (
     <svg
       viewBox="0 0 100 100"
-      className="w-[80%] h-[80%] overflow-visible"
+      className={`w-[80%] h-[80%] overflow-visible ${className}`}
       fill="none"
       stroke={stroke}
       strokeWidth={isX ? 11 : 9}

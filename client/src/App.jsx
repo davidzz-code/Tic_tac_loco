@@ -22,7 +22,7 @@ const createActiveSquares = () =>
   Array.from({ length: 9 }, () => ({
     opacity: 'opacity-100',
     disableClick: false,
-    hover: 'hover:bg-gray-700 hover:cursor-pointer',
+    hover: 'hover:cursor-pointer',
   }))
 
 function App() {
@@ -318,6 +318,14 @@ function App() {
     gameMode === GAME_MODES.ONLINE &&
     (onlineStatus === 'connecting' || onlineStatus === 'menu' || onlineStatus === 'waiting')
 
+  // Which mark to preview (ghost) on hover — only when it's your turn to move.
+  const previewMark =
+    winner !== null ? null
+    : gameMode === GAME_MODES.DOUBLE ? turn
+    : gameMode === GAME_MODES.SINGLE ? (turn === TURNS.X ? TURNS.X : null)
+    : gameMode === GAME_MODES.ONLINE ? (turn === playerSymbol ? turn : null)
+    : null
+
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
       {isHowToPlayOpen && (
@@ -390,7 +398,7 @@ function App() {
                   {turn === playerSymbol ? 'Tu turno' : 'Turno del rival…'}
                 </p>
               )}
-              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode} />
+              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode} previewMark={previewMark} />
               <Turns turn={turn} endGameOpacity={endGameOpacity} gameMode={gameMode} isAiThinking={isAiThinking} />
               <WinnerModal winner={winner} resetGame={resetGame} />
             </div>
