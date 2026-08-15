@@ -36,9 +36,11 @@
   animation-delay: 0.16s;
 }
 
-/* The O is a single continuous stroke, a bit slower */
+/* The O is a single continuous stroke. Its draw is a touch longer than the
+   O sound (see sound.js) on purpose: the audio finishes just before the pen
+   completes the circle, which reads better visually. */
 .mark-o {
-  animation-duration: 0.34s;
+  animation-duration: 0.42s;
 }
 
 @media (prefers-reduced-motion: reduce) {
