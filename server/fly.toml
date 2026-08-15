@@ -14,9 +14,13 @@ primary_region = 'cdg'
 [http_service]
   internal_port = 3000
   force_https = true
-  auto_stop_machines = 'off'
+  # Casual/near-free setup: stop the machine when idle and boot it on the next
+  # connection (a few seconds cold start, shown as "Conectando…" in the UI).
+  # For always-on (no cold start, ~$2/mo): auto_stop_machines = 'off' and
+  # min_machines_running = 1.
+  auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 1
+  min_machines_running = 0
 
 [[vm]]
   size = 'shared-cpu-1x'
