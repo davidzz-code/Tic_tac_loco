@@ -10,6 +10,8 @@ import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
 import HowToPlay from './components/HowToPlay'
 import { getAiMove } from './aiEngine'
+import { playMark, setMuted, primeAudio } from './sound'
+import { Volume2Icon, VolumeXIcon } from 'lucide-react'
 import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard, redirectMove } from './board'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000'
@@ -71,6 +73,7 @@ function App() {
   const [difficulty, setDifficulty] = useState(() => {
     return window.localStorage.getItem('difficulty') || DIFFICULTY.MEDIUM
   })
+  const [soundMuted, setSoundMuted] = useState(() => window.localStorage.getItem('sound-muted') === 'true')
 
   const [aiMove, setAiMove] = useState(null)
   const [isAiThinking, setIsAiThinking] = useState(false)
@@ -106,6 +109,29 @@ function App() {
     }
     return () => aiWorkerRef.current?.terminate()
   }, [])
+
+  // Keep the sound module in sync with the mute setting.
+  useEffect(() => {
+    setMuted(soundMuted)
+  }, [soundMuted])
+
+  // Unlock audio on the first user interaction (browser autoplay policy).
+  useEffect(() => {
+    const unlock = () => {
+      primeAudio()
+      window.removeEventListener('pointerdown', unlock)
+    }
+    window.addEventListener('pointerdown', unlock)
+    return () => window.removeEventListener('pointerdown', unlock)
+  }, [])
+
+  function toggleSound() {
+    setSoundMuted((prev) => {
+      const next = !prev
+      window.localStorage.setItem('sound-muted', String(next))
+      return next
+    })
+  }
 
   // Open a socket while in online mode; tear it down when leaving.
   useEffect(() => {
@@ -240,6 +266,8 @@ function App() {
     // Online turn lock: ignore local clicks when it isn't your turn.
     if (gameMode === GAME_MODES.ONLINE && !isRemote && turn !== playerSymbol) return
 
+    playMark(turn)
+
     const newBoard = [...board]
     newBoard[boardIndex] = [...newBoard[boardIndex]]
     newBoard[boardIndex][squareIndex] = turn
@@ -326,6 +354,16 @@ function App() {
                   Sala {roomId} · Eres {playerSymbol}
                 </span>
               )}
+              <button
+                className="p-1.5 border-2 border-white rounded-md hover:bg-gray-800 transition duration-300"
+                onClick={toggleSound}
+                aria-label={soundMuted ? 'Activar sonido' : 'Silenciar'}
+                title={soundMuted ? 'Activar sonido' : 'Silenciar'}
+              >
+                {soundMuted
+                  ? <VolumeXIcon className="h-4 w-4 md:h-5 md:w-5" />
+                  : <Volume2Icon className="h-4 w-4 md:h-5 md:w-5" />}
+              </button>
               <button
                 className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
                 onClick={resetGame}
