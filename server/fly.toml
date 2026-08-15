@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for tic-tac-loco-server on 2026-08-15T01:57:13+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'tic-tac-loco-server'
+primary_region = 'cdg'
+
+# IMPORTANT: keep this a SINGLE machine (`fly scale count 1`).
+# Game rooms are kept in-memory, so multiple instances would split players
+# into different room maps and break the online matches.
+
+[build]
+[http_service]
+  internal_port = 3000
+  force_https = true
+  # Casual/near-free setup: stop the machine when idle and boot it on the next
+  # connection (a few seconds cold start, shown as "Conectando…" in the UI).
+  # For always-on (no cold start, ~$2/mo): auto_stop_machines = 'off' and
+  # min_machines_running = 1.
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'
