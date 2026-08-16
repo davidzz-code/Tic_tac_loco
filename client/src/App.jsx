@@ -9,9 +9,10 @@ import RoomManager from './components/RoomManager'
 import confetti from 'canvas-confetti'
 import WinnerModal from './components/WinnerModal'
 import HowToPlay from './components/HowToPlay'
+import ConfirmDialog from './components/ConfirmDialog'
 import { getAiMove } from './aiEngine'
 import { playMark, setMuted, primeAudio } from './sound'
-import { Volume2Icon, VolumeXIcon } from 'lucide-react'
+import { Volume2Icon, VolumeXIcon, RotateCcwIcon, ArrowLeftIcon } from 'lucide-react'
 import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard, redirectMove } from './board'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000'
@@ -74,6 +75,7 @@ function App() {
     return window.localStorage.getItem('difficulty') || DIFFICULTY.MEDIUM
   })
   const [soundMuted, setSoundMuted] = useState(() => window.localStorage.getItem('sound-muted') === 'true')
+  const [confirm, setConfirm] = useState(null)
 
   const [aiMove, setAiMove] = useState(null)
   const [isAiThinking, setIsAiThinking] = useState(false)
@@ -326,11 +328,52 @@ function App() {
     : gameMode === GAME_MODES.ONLINE ? (turn === playerSymbol ? turn : null)
     : null
 
+  // Only warn about reset/exit when there's an in-progress board to lose.
+  const boardHasMoves = board.some((sub) => (typeof sub === 'string' ? true : sub.some(Boolean)))
+
+  function requestReset() {
+    if (boardHasMoves && winner === null) {
+      setConfirm({
+        title: 'Reiniciar la partida',
+        message: 'Se borrará el tablero actual y empezaréis de nuevo.',
+        confirmLabel: 'Reiniciar',
+        onConfirm: resetGame,
+      })
+    } else {
+      resetGame()
+    }
+  }
+
+  function requestExit() {
+    if (boardHasMoves) {
+      setConfirm({
+        title: 'Salir de la partida',
+        message:
+          gameMode === GAME_MODES.ONLINE
+            ? 'Abandonarás la partida y tu rival se quedará solo.'
+            : 'Se perderá la partida actual.',
+        confirmLabel: 'Salir',
+        onConfirm: resetGameMode,
+      })
+    } else {
+      resetGameMode()
+    }
+  }
+
   return (
     <main className="w-screen h-screen flex flex-col justify-center items-center">
       {isHowToPlayOpen && (
         <HowToPlay setIsHowToPlayOpen={setIsHowToPlayOpen}/>
       )}
+      <ConfirmDialog
+        open={!!confirm}
+        title={confirm?.title}
+        message={confirm?.message}
+        confirmLabel={confirm?.confirmLabel}
+        danger
+        onConfirm={() => { confirm?.onConfirm?.(); setConfirm(null) }}
+        onCancel={() => setConfirm(null)}
+      />
       {!isGameModeSelected ? (
         <GameMode setIsGameModeSelected={setIsGameModeSelected} setGameMode={setGameMode} setIsHowToPlayOpen={setIsHowToPlayOpen} setDifficulty={setDifficulty}/>
       ) : inOnlineLobby ? (
@@ -345,25 +388,40 @@ function App() {
       ) : (
         <>
           <header className={`w-full flex justify-between items-center px-4 py-2 ${endGameOpacity}`}>
-            <button
-              className="bg-[#242424] hover:border hover:border-white transition duration-300 text-sm md:text-base"
-              onClick={resetGameMode}
-            >
-              <h2 className="text-2xl font-semibold md:text-3xl">Tic Tac Loco</h2>
-            </button>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2 md:gap-3">
+              <button
+                className="p-1.5 rounded-full bg-transparent border-0 text-gray-300 hover:text-white hover:bg-white/10 transition duration-200"
+                onClick={requestExit}
+                aria-label="Salir al menú"
+                title="Salir al menú"
+              >
+                <ArrowLeftIcon className="h-4 w-4 md:h-5 md:w-5" />
+              </button>
+              <h2 className="text-2xl font-semibold md:text-3xl" style={{ lineHeight: 1 }}>Tic Tac Loco</h2>
               {gameMode === GAME_MODES.SINGLE && (
-                <span className="hidden sm:inline px-3 py-1 border-2 border-gray-500 text-gray-300 rounded-md text-sm md:text-base">
+                <span className="hidden sm:inline-flex items-center leading-none px-2.5 py-1 border border-gray-500 text-gray-300 rounded-full text-xs md:text-sm translate-y-[2px]">
                   {DIFFICULTY_LABELS[difficulty]}
                 </span>
               )}
               {gameMode === GAME_MODES.ONLINE && (
-                <span className="hidden sm:inline px-3 py-1 border-2 border-gray-500 text-gray-300 rounded-md text-sm md:text-base">
-                  Sala {roomId} · Eres {playerSymbol}
+                <span className="hidden sm:inline-flex items-center leading-none px-2.5 py-1 border border-gray-500 text-gray-300 rounded-full text-xs md:text-sm translate-y-[2px]">
+                  Sala {roomId} · {playerSymbol}
                 </span>
               )}
+            </div>
+            <div className="flex items-center gap-2">
+              {gameMode !== GAME_MODES.ONLINE && (
+                <button
+                  className="p-1.5 rounded-full bg-transparent border-0 text-gray-300 hover:text-white hover:bg-white/10 transition duration-200"
+                  onClick={requestReset}
+                  aria-label="Reiniciar partida"
+                  title="Reiniciar partida"
+                >
+                  <RotateCcwIcon className="h-4 w-4 md:h-5 md:w-5" />
+                </button>
+              )}
               <button
-                className="p-1.5 border-2 border-white rounded-md hover:bg-gray-800 transition duration-300"
+                className="p-1.5 rounded-full bg-transparent border-0 text-gray-300 hover:text-white hover:bg-white/10 transition duration-200"
                 onClick={toggleSound}
                 aria-label={soundMuted ? 'Activar sonido' : 'Silenciar'}
                 title={soundMuted ? 'Activar sonido' : 'Silenciar'}
@@ -373,16 +431,12 @@ function App() {
                   : <Volume2Icon className="h-4 w-4 md:h-5 md:w-5" />}
               </button>
               <button
-                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
-                onClick={resetGame}
-              >
-                Reiniciar
-              </button>
-              <button
-                className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
+                className="p-1.5 rounded-full bg-transparent border-0 text-gray-300 hover:text-white hover:bg-white/10 transition duration-200"
                 onClick={() => setIsHowToPlayOpen(true)}
+                aria-label="Cómo jugar"
+                title="Cómo jugar"
               >
-                Cómo jugar
+                <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xl md:text-2xl font-bold leading-none">?</span>
               </button>
             </div>
           </header>
