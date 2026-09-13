@@ -44,7 +44,7 @@ function leaveRoom(socket) {
 io.on('connection', (socket) => {
   socket.on('createRoom', (roomId) => {
     if (rooms.has(roomId)) {
-      socket.emit('roomError', { message: 'Esa sala ya existe, prueba otra.' })
+      socket.emit('roomError', { code: 'exists', message: 'Esa sala ya existe, prueba otra.' })
       return
     }
     rooms.set(roomId, { players: [socket.id] })
@@ -56,11 +56,11 @@ io.on('connection', (socket) => {
   socket.on('joinRoom', (roomId) => {
     const room = rooms.get(roomId)
     if (!room) {
-      socket.emit('roomError', { message: 'La sala no existe.' })
+      socket.emit('roomError', { code: 'not_found', message: 'La sala no existe.' })
       return
     }
     if (room.players.length >= 2) {
-      socket.emit('roomError', { message: 'La sala está llena.' })
+      socket.emit('roomError', { code: 'full', message: 'La sala está llena.' })
       return
     }
     room.players.push(socket.id)

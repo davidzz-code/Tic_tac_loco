@@ -1,7 +1,9 @@
 import './App.css'
-import { GAME_MODES, TURNS, DIFFICULTY, DIFFICULTY_LABELS } from './constants'
+import { GAME_MODES, TURNS, DIFFICULTY } from './constants'
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { io } from 'socket.io-client'
+import LanguageToggle from './components/LanguageToggle'
+import { useI18n } from './i18n/i18n'
 import Turns from './components/Turns'
 import Board from './components/Board'
 import GameMode from './components/GameMode'
@@ -17,6 +19,9 @@ import { checkWinnerSmallBoard, checkEndGame, findMainWinner, redirectMove } fro
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000'
 
+// Map server room-error codes to i18n keys (falls back to the raw message).
+const ROOM_ERR_KEY = { exists: 'online.err.exists', not_found: 'online.err.notFound', full: 'online.err.full' }
+
 const createEmptyBoard = () => Array.from({ length: 9 }, () => Array(9).fill(null))
 
 const createActiveSquares = () =>
@@ -27,6 +32,7 @@ const createActiveSquares = () =>
   }))
 
 function App() {
+  const { t } = useI18n()
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false)
   const [board, setBoard] = useState(() => {
     try {
@@ -149,7 +155,7 @@ function App() {
     socketRef.current = socket
 
     socket.on('connect', () => setOnlineStatus('menu'))
-    socket.on('connect_error', () => setOnlineMessage('No se pudo conectar al servidor.'))
+    socket.on('connect_error', () => setOnlineMessage('online.connectError'))
     socket.on('roomCreated', ({ roomId, symbol }) => {
       setRoomId(roomId)
       setPlayerSymbol(symbol)
@@ -166,7 +172,7 @@ function App() {
     socket.on('opponentMove', ({ boardIndex, squareIndex }) => setRemoteMove([boardIndex, squareIndex]))
     socket.on('opponentReset', () => resetLocal())
     socket.on('opponentLeft', () => setOnlineStatus('ended'))
-    socket.on('roomError', ({ message }) => setOnlineMessage(message))
+    socket.on('roomError', ({ code, message }) => setOnlineMessage(ROOM_ERR_KEY[code] || message || ''))
 
     return () => {
       socket.disconnect()
@@ -348,9 +354,9 @@ function App() {
   function requestReset() {
     if (boardHasMoves && winner === null) {
       setConfirm({
-        title: 'Reiniciar la partida',
-        message: 'Se borrará el tablero actual y empezaréis de nuevo.',
-        confirmLabel: 'Reiniciar',
+        title: t('confirm.resetTitle'),
+        message: t('confirm.resetMsg'),
+        confirmLabel: t('confirm.resetConfirm'),
         onConfirm: resetGame,
       })
     } else {
@@ -361,12 +367,9 @@ function App() {
   function requestExit() {
     if (boardHasMoves) {
       setConfirm({
-        title: 'Salir de la partida',
-        message:
-          gameMode === GAME_MODES.ONLINE
-            ? 'Abandonarás la partida y tu rival se quedará solo.'
-            : 'Se perderá la partida actual.',
-        confirmLabel: 'Salir',
+        title: t('confirm.exitTitle'),
+        message: gameMode === GAME_MODES.ONLINE ? t('confirm.exitMsgOnline') : t('confirm.exitMsgLocal'),
+        confirmLabel: t('confirm.exitConfirm'),
         onConfirm: resetGameMode,
       })
     } else {
@@ -384,6 +387,7 @@ function App() {
         title={confirm?.title}
         message={confirm?.message}
         confirmLabel={confirm?.confirmLabel}
+        cancelLabel={t('common.cancel')}
         danger
         onConfirm={() => { confirm?.onConfirm?.(); setConfirm(null) }}
         onCancel={() => setConfirm(null)}
@@ -394,7 +398,7 @@ function App() {
         <RoomManager
           onlineStatus={onlineStatus}
           roomId={roomId}
-          message={onlineMessage}
+          message={onlineMessage ? t(onlineMessage) : ''}
           onCreate={handleCreateRoom}
           onJoin={handleJoinRoom}
           onBack={resetGameMode}
@@ -406,20 +410,20 @@ function App() {
               <button
                 className="p-1.5 rounded-full bg-transparent border-0 text-gray-300 hover:text-white hover:bg-white/10 transition duration-200"
                 onClick={requestExit}
-                aria-label="Salir al menú"
-                title="Salir al menú"
+                aria-label={t('game.exitToMenu')}
+                title={t('game.exitToMenu')}
               >
                 <ArrowLeftIcon className="h-4 w-4 md:h-5 md:w-5" />
               </button>
               <h2 className="text-2xl font-semibold md:text-3xl" style={{ lineHeight: 1 }}>Tic Tac Loco</h2>
               {gameMode === GAME_MODES.SINGLE && (
                 <span className="hidden sm:inline-flex items-center leading-none px-2.5 py-1 border border-gray-500 text-gray-300 rounded-full text-xs md:text-sm translate-y-[2px]">
-                  {DIFFICULTY_LABELS[difficulty]}
+                  {t(`difficulty.${difficulty}`)}
                 </span>
               )}
               {gameMode === GAME_MODES.ONLINE && (
                 <span className="hidden sm:inline-flex items-center leading-none px-2.5 py-1 border border-gray-500 text-gray-300 rounded-full text-xs md:text-sm translate-y-[2px]">
-                  Sala {roomId} · {playerSymbol}
+                  {t('online.room')} {roomId} · {playerSymbol}
                 </span>
               )}
             </div>
@@ -428,8 +432,8 @@ function App() {
                 <button
                   className="p-1.5 rounded-full bg-transparent border-0 text-gray-300 hover:text-white hover:bg-white/10 transition duration-200"
                   onClick={requestReset}
-                  aria-label="Reiniciar partida"
-                  title="Reiniciar partida"
+                  aria-label={t('game.restart')}
+                  title={t('game.restart')}
                 >
                   <RotateCcwIcon className="h-4 w-4 md:h-5 md:w-5" />
                 </button>
@@ -437,8 +441,8 @@ function App() {
               <button
                 className="p-1.5 rounded-full bg-transparent border-0 text-gray-300 hover:text-white hover:bg-white/10 transition duration-200"
                 onClick={toggleSound}
-                aria-label={soundMuted ? 'Activar sonido' : 'Silenciar'}
-                title={soundMuted ? 'Activar sonido' : 'Silenciar'}
+                aria-label={soundMuted ? t('game.soundOn') : t('game.soundOff')}
+                title={soundMuted ? t('game.soundOn') : t('game.soundOff')}
               >
                 {soundMuted
                   ? <VolumeXIcon className="h-4 w-4 md:h-5 md:w-5" />
@@ -447,23 +451,24 @@ function App() {
               <button
                 className="p-1.5 rounded-full bg-transparent border-0 text-gray-300 hover:text-white hover:bg-white/10 transition duration-200"
                 onClick={() => setIsHowToPlayOpen(true)}
-                aria-label="Cómo jugar"
-                title="Cómo jugar"
+                aria-label={t('common.howToPlay')}
+                title={t('common.howToPlay')}
               >
                 <span className="inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xl md:text-2xl font-bold leading-none">?</span>
               </button>
+              <LanguageToggle />
             </div>
           </header>
           <section className="flex flex-col justify-center items-center w-full h-full">
             <div className="flex flex-col items-center w-full max-w-md md:max-w-full">
               {gameMode === GAME_MODES.ONLINE && onlineStatus === 'ended' && (
                 <div className="mb-2 px-4 py-2 bg-red-500/20 border border-red-500 text-red-300 rounded-md text-sm">
-                  Tu rival se ha desconectado.
+                  {t('online.opponentLeft')}
                 </div>
               )}
               {gameMode === GAME_MODES.ONLINE && onlineStatus === 'playing' && !winner && (
                 <p className={`mb-2 text-sm font-semibold ${turn === playerSymbol ? 'text-green-400' : 'text-gray-400'}`}>
-                  {turn === playerSymbol ? 'Tu turno' : 'Turno del rival…'}
+                  {turn === playerSymbol ? t('game.yourTurn') : t('game.opponentTurn')}
                 </p>
               )}
               <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode} previewMark={previewMark} winningLine={winningLine} winner={winner} />

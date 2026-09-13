@@ -1,8 +1,10 @@
 import { TURNS, GAME_MODES } from "../constants"
 import Square from "./Square"
 import { UserIcon, CpuIcon } from "lucide-react"
+import { useI18n } from "../i18n/i18n"
 
 export default function Turns({ turn, endGameOpacity, gameMode, isAiThinking }) {
+  const { t } = useI18n()
   const isSingle = gameMode === GAME_MODES.SINGLE
 
   return (
@@ -26,7 +28,7 @@ export default function Turns({ turn, endGameOpacity, gameMode, isAiThinking }) 
       <div className="h-5 flex items-center">
         {isSingle && isAiThinking && (
           <span className="flex items-center gap-2 text-sm text-gray-300">
-            La IA está pensando
+            {t('game.aiThinking')}
             <span className="flex gap-1.5">
               <span className="ai-dot w-2.5 h-2.5 rounded-full border-2 border-blue-500" style={{ animationDelay: '0ms' }} />
               <span className="ai-dot w-2.5 h-2.5 rounded-full border-2 border-blue-500" style={{ animationDelay: '200ms' }} />

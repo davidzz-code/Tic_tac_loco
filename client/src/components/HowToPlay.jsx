@@ -1,41 +1,12 @@
 import { useState } from 'react';
+import { useI18n } from '../i18n/i18n';
+import { tutorialSlides } from '../i18n/translations';
 
 export default function HowToPlay({ setIsHowToPlayOpen }) {
+  const { t, lang } = useI18n();
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides = [
-    {
-      emoji: '🎯',
-      title: 'Objetivo',
-      text: 'El jugador que consiga el tres en raya en el tablero grande ganará el juego.',
-      imgSrc: ['/assets/how_to_play_1.webp'],
-    },
-    {
-      emoji: '📍',
-      title: '¿Cómo ganar?',
-      text: 'Los tres en raya pequeños funcionan igual que el juego original',
-      imgSrc: ['/assets/how_to_play_2.webp'],
-    },
-    {
-      emoji: '📍',
-      title: '¿Cómo ganar?',
-      text: 'Cuando ganas un tres en raya pequeño, ese espacio en el tablero se bloquea con tu símbolo',
-      imgSrc: ['/assets/how_to_play_3.webp', '/assets/how_to_play_4.webp'],
-    },
-    {
-      emoji: '⚡',
-      title: 'Regla especial - Turnos',
-      text: 'Tu movimiento decide dónde jugará tu oponente en el siguiente turno',
-      secondText: 'Al colocar tu símbolo en un espacio de un tres en raya pequeño, tu rival deberá jugar en el tres en raya que ocupa esa misma posición dentro del tablero grande.',
-      imgSrc: ['/assets/how_to_play_5.webp', '/assets/how_to_play_6.webp'],
-    },
-    {
-      emoji: '🎲',
-      title: 'Juega donde quieras',
-      text: 'Si tu oponente te envía a jugar en una casilla de tres en raya que ya ha sido ganada, puedes elegir cualquier casilla libre del tablero grande.',
-      imgSrc: ['/assets/how_to_play_7.webp', '/assets/how_to_play_8.webp'],
-    },
-  ];
+  const slides = tutorialSlides[lang] || tutorialSlides.es;
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -55,7 +26,7 @@ export default function HowToPlay({ setIsHowToPlayOpen }) {
     <div className="fixed inset-0 bg-gray-600 bg-opacity-80 flex justify-center items-center z-50">
       <div className={`bg-[#242424] border-2 border-white p-6 rounded-lg mx-6 w-full max-w-xl`}>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-sm font-semibold text-center">Cómo jugar</h2>
+          <h2 className="text-sm font-semibold text-center">{t('common.howToPlay')}</h2>
           <button onClick={closeHowToPlay} className="text-md px-4 py-2 font-bold">X</button>
         </div>
 
