@@ -43,8 +43,24 @@
   animation-duration: 0.42s;
 }
 
+/* Winning line drawn across the three winning sub-boards */
+@keyframes ttl-winning-line {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+.winning-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: ttl-winning-line 0.55s ease-out forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mark-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .winning-line {
     animation: none;
     stroke-dashoffset: 0;
   }

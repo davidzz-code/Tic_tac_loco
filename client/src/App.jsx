@@ -13,7 +13,7 @@ import ConfirmDialog from './components/ConfirmDialog'
 import { getAiMove } from './aiEngine'
 import { playMark, setMuted, primeAudio } from './sound'
 import { Volume2Icon, VolumeXIcon, RotateCcwIcon, ArrowLeftIcon } from 'lucide-react'
-import { checkWinnerSmallBoard, checkEndGame, checkWinnerMainBoard, redirectMove } from './board'
+import { checkWinnerSmallBoard, checkEndGame, findMainWinner, redirectMove } from './board'
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000'
 
@@ -76,6 +76,8 @@ function App() {
   })
   const [soundMuted, setSoundMuted] = useState(() => window.localStorage.getItem('sound-muted') === 'true')
   const [confirm, setConfirm] = useState(null)
+  const [winningLine, setWinningLine] = useState(null)  // the 3 winning sub-board indices, to draw the line
+  const [resultVisible, setResultVisible] = useState(false) // delays the winner modal so the winning line is seen
 
   const [aiMove, setAiMove] = useState(null)
   const [isAiThinking, setIsAiThinking] = useState(false)
@@ -99,6 +101,8 @@ function App() {
     setEndGameOpacity('opacity-100 blur-none')
     setWinner(null)
     setRemoteMove(null)
+    setWinningLine(null)
+    setResultVisible(false)
   }, [])
 
   // The AI search runs in a Web Worker so it never blocks the UI thread.
@@ -285,17 +289,27 @@ function App() {
       newBoard[boardIndex] = smallBoardWinner
       setBoard(newBoard)
 
-      const newWinner = checkWinnerMainBoard(newBoard)
+      const mainResult = findMainWinner(newBoard)
 
-      if (newWinner) {
-        if (gameMode !== GAME_MODES.ONLINE || newWinner === playerSymbol) confetti()
-        setWinner(newWinner)
-        setEndGameOpacity('opacity-70 blur-sm')
+      if (mainResult) {
+        // Mark the game over now (blocks further moves) but delay the modal +
+        // blur so the winning-line animation is seen first.
+        setWinner(mainResult.mark)
+        setWinningLine(mainResult.combo)
         gameEnded = true
+        const celebrate = gameMode !== GAME_MODES.ONLINE || mainResult.mark === playerSymbol
+        setTimeout(() => {
+          if (celebrate) confetti()
+          setEndGameOpacity('opacity-70 blur-sm')
+          setResultVisible(true)
+        }, 1500)
       } else if (checkEndGame(newBoard)) {
-        setEndGameOpacity('opacity-70 blur-sm')
         setWinner(false)
         gameEnded = true
+        setTimeout(() => {
+          setEndGameOpacity('opacity-70 blur-sm')
+          setResultVisible(true)
+        }, 700)
       }
     }
     const newActiveSquares = redirectMove(newBoard, squareIndex, activeSquares)
@@ -452,9 +466,9 @@ function App() {
                   {turn === playerSymbol ? 'Tu turno' : 'Turno del rival…'}
                 </p>
               )}
-              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode} previewMark={previewMark} />
+              <Board board={board} updateBoard={updateBoard} turn={turn} endGameOpacity={endGameOpacity} activeSquares={activeSquares} gameMode={gameMode} previewMark={previewMark} winningLine={winningLine} winner={winner} />
               <Turns turn={turn} endGameOpacity={endGameOpacity} gameMode={gameMode} isAiThinking={isAiThinking} />
-              <WinnerModal winner={winner} resetGame={resetGame} />
+              {resultVisible && <WinnerModal winner={winner} resetGame={resetGame} />}
             </div>
           </section>
         </>

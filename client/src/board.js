@@ -35,6 +35,24 @@ export function checkWinnerMainBoard(boardToCheck) {
   return null
 }
 
+// Like checkWinnerMainBoard but also returns which three sub-boards won,
+// so we can draw the winning line. Returns { mark, combo } or null.
+export function findMainWinner(boardToCheck) {
+  for (const combo of WINNER_COMBOS) {
+    const [a, b, c] = combo
+    const valueA = boardToCheck[a]
+    if (
+      valueA &&
+      !Array.isArray(valueA) &&
+      valueA === boardToCheck[b] &&
+      valueA === boardToCheck[c]
+    ) {
+      return { mark: valueA, combo }
+    }
+  }
+  return null
+}
+
 export function checkEndGame(boardToCheck) {
   for (const smallBoard of boardToCheck) {
     if (Array.isArray(smallBoard)) return false
