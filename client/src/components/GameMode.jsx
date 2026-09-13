@@ -5,9 +5,9 @@ import { XIcon, CircleIcon, UserIcon, CpuIcon, GlobeIcon } from "lucide-react"
 const DIFFICULTY_ORDER = [DIFFICULTY.EASY, DIFFICULTY.MEDIUM, DIFFICULTY.HARD]
 
 const DIFFICULTY_STYLES = {
-  [DIFFICULTY.EASY]: 'hover:border-green-500 hover:text-green-500',
-  [DIFFICULTY.MEDIUM]: 'hover:border-yellow-500 hover:text-yellow-500',
-  [DIFFICULTY.HARD]: 'hover:border-red-500 hover:text-red-500',
+  [DIFFICULTY.EASY]: 'hover:border-green-500 hover:text-green-700',
+  [DIFFICULTY.MEDIUM]: 'hover:border-yellow-500 hover:text-yellow-700',
+  [DIFFICULTY.HARD]: 'hover:border-red-500 hover:text-red-700',
 }
 
 export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowToPlayOpen, setDifficulty }) {
@@ -55,7 +55,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
           </div>
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-bold mb-8 text-center z-10">
+        <h1 className="text-5xl md:text-6xl font-bold mb-3 text-center z-10">
           {["T", "i", "c", " ", "T", "a", "c", " ", "L", "o", "c", "o"].map((char, index) => (
             <span
               key={index}
@@ -63,10 +63,14 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
                 index % 2 === 0 ? "hover:text-[#EF4444]" : "hover:text-[#3C82F6]"
               }`}
             >
-              {char}
+              {char === " " ? " " : char}
             </span>
           ))}
         </h1>
+
+        <p className="text-gray-400 text-base md:text-lg mb-10 text-center z-10">
+          El tres en raya definitivo
+        </p>
 
         {choosingDifficulty ? (
           <div className="flex flex-col items-center gap-4 w-full max-w-xl z-10">
@@ -90,41 +94,36 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
             </button>
           </div>
         ) : (
-          <div className="flex flex-row flex-wrap gap-6 w-full max-w-2xl items-center justify-center z-10">
-            <button
-              onClick={handleClickDoublePlayer}
-              className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
-            >
-              <div className="flex flex-col items-center">
-                <UserIcon className="h-10 w-10 mb-1" />
-                <span className="text-sm font-semibold">Jugador</span>
-              </div>
-              <span className="mx-3 text-xl font-bold group-hover:text-[#3C82F6] transition-colors duration-200">VS</span>
-              <div className="flex flex-col items-center">
-                <UserIcon className="h-10 w-10 mb-1" />
-                <span className="text-sm font-semibold">Jugador</span>
-              </div>
-            </button>
+          <div className="flex flex-row flex-wrap gap-6 w-full max-w-3xl items-stretch justify-center z-10">
             <button
               onClick={() => setChoosingDifficulty(true)}
-              className="w-40 h-32 flex items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+              className="w-44 h-36 flex flex-col items-center justify-center p-4 bg-gray-200 text-[#242424] rounded-lg border-0 hover:scale-105 hover:ring-4 hover:ring-[#EF4444]/60 transition-all duration-200 ease-in-out group"
             >
-              <div className="flex flex-col items-center">
-                <UserIcon className="h-10 w-10 mb-1" />
-                <span className="text-sm font-semibold">Jugador</span>
+              <div className="flex items-center gap-2 group-hover:text-[#EF4444] transition-colors duration-200">
+                <UserIcon className="h-8 w-8" />
+                <CpuIcon className="h-8 w-8" />
               </div>
-              <span className="mx-3 text-xl font-bold group-hover:text-[#EF4444] transition-colors duration-200">VS</span>
-              <div className="flex flex-col items-center">
-                <CpuIcon className="h-8 w-8 md:h-10 md:w-10 mb-1" />
-                <span className="text-sm font-semibold">IA</span>
+              <span className="mt-3 text-base font-bold leading-tight">1 Jugador</span>
+              <span className="text-xs text-gray-500 leading-tight">Contra la IA</span>
+            </button>
+            <button
+              onClick={handleClickDoublePlayer}
+              className="w-44 h-36 flex flex-col items-center justify-center p-4 bg-gray-200 text-[#242424] rounded-lg border-0 hover:scale-105 hover:ring-4 hover:ring-[#3C82F6]/60 transition-all duration-200 ease-in-out group"
+            >
+              <div className="flex items-center gap-2 group-hover:text-[#3C82F6] transition-colors duration-200">
+                <UserIcon className="h-8 w-8" />
+                <UserIcon className="h-8 w-8" />
               </div>
+              <span className="mt-3 text-base font-bold leading-tight">2 Jugadores</span>
+              <span className="text-xs text-gray-500 leading-tight">Mismo dispositivo</span>
             </button>
             <button
               onClick={handleClickOnline}
-              className="w-40 h-32 flex flex-col items-center group justify-center p-4 bg-gray-200 hover:border-gray-200 text-[#242424] rounded-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+              className="w-44 h-36 flex flex-col items-center justify-center p-4 bg-gray-200 text-[#242424] rounded-lg border-0 hover:scale-105 hover:ring-4 hover:ring-[#3C82F6]/60 transition-all duration-200 ease-in-out group"
             >
-              <GlobeIcon className="h-10 w-10 mb-2 group-hover:text-[#3C82F6] transition-colors duration-200" />
-              <span className="text-sm font-semibold">Online</span>
+              <GlobeIcon className="h-8 w-8 group-hover:text-[#3C82F6] transition-colors duration-200" />
+              <span className="mt-3 text-base font-bold leading-tight">Online</span>
+              <span className="text-xs leading-tight opacity-0 select-none" aria-hidden="true">·</span>
             </button>
           </div>
         )}
