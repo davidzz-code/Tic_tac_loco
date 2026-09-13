@@ -1,6 +1,8 @@
 import { useState } from "react"
-import { GAME_MODES, DIFFICULTY, DIFFICULTY_LABELS } from "../constants"
+import { GAME_MODES, DIFFICULTY } from "../constants"
 import { XIcon, CircleIcon, UserIcon, CpuIcon, GlobeIcon } from "lucide-react"
+import { useI18n } from "../i18n/i18n"
+import LanguageToggle from "./LanguageToggle"
 
 const DIFFICULTY_ORDER = [DIFFICULTY.EASY, DIFFICULTY.MEDIUM, DIFFICULTY.HARD]
 
@@ -11,6 +13,7 @@ const DIFFICULTY_STYLES = {
 }
 
 export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowToPlayOpen, setDifficulty }) {
+  const { t } = useI18n()
   const [choosingDifficulty, setChoosingDifficulty] = useState(false)
 
   function startGame(mode) {
@@ -36,12 +39,13 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
 
   return (
     <>
-      <header className='w-full absolute top-0 flex justify-end px-4 py-2 z-30'>
+      <header className='w-full absolute top-0 flex justify-end items-center gap-2 px-4 py-2 z-30'>
+          <LanguageToggle />
           <button
             className="px-3 py-1 border-2 border-white rounded-md hover:bg-gray-800 hover:text-white transition duration-300 text-sm md:text-base"
             onClick={() => setIsHowToPlayOpen(true)}
           >
-            Cómo jugar
+            {t('common.howToPlay')}
           </button>
       </header>
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#242424] text-white p-4 relative">
@@ -69,12 +73,12 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
         </h1>
 
         <p className="text-gray-400 text-base md:text-lg mb-10 text-center z-10">
-          El tres en raya definitivo
+          {t('menu.subtitle')}
         </p>
 
         {choosingDifficulty ? (
           <div className="flex flex-col items-center gap-4 w-full max-w-xl z-10">
-            <p className="text-lg font-semibold">Elige la dificultad</p>
+            <p className="text-lg font-semibold">{t('menu.chooseDifficulty')}</p>
             <div className="flex flex-row gap-4 flex-wrap justify-center">
               {DIFFICULTY_ORDER.map((level) => (
                 <button
@@ -82,7 +86,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
                   onClick={() => handleSelectDifficulty(level)}
                   className={`w-28 h-20 flex items-center justify-center bg-gray-200 text-[#242424] font-semibold rounded-lg border-2 border-transparent hover:scale-105 transition-all duration-200 ${DIFFICULTY_STYLES[level]}`}
                 >
-                  {DIFFICULTY_LABELS[level]}
+                  {t(`difficulty.${level}`)}
                 </button>
               ))}
             </div>
@@ -90,7 +94,7 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
               onClick={() => setChoosingDifficulty(false)}
               className="mt-2 text-sm text-gray-400 hover:text-white transition-colors duration-200"
             >
-              ← Volver
+              {t('common.back')}
             </button>
           </div>
         ) : (
@@ -103,8 +107,8 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
                 <UserIcon className="h-8 w-8" />
                 <CpuIcon className="h-8 w-8" />
               </div>
-              <span className="mt-3 text-base font-bold leading-tight">1 Jugador</span>
-              <span className="text-xs text-gray-500 leading-tight">Contra la IA</span>
+              <span className="mt-3 text-base font-bold leading-tight">{t('menu.singlePlayer')}</span>
+              <span className="text-xs text-gray-500 leading-tight">{t('menu.singlePlayerSub')}</span>
             </button>
             <button
               onClick={handleClickDoublePlayer}
@@ -114,15 +118,15 @@ export default function GameMode({ setGameMode, setIsGameModeSelected, setIsHowT
                 <UserIcon className="h-8 w-8" />
                 <UserIcon className="h-8 w-8" />
               </div>
-              <span className="mt-3 text-base font-bold leading-tight">2 Jugadores</span>
-              <span className="text-xs text-gray-500 leading-tight">Mismo dispositivo</span>
+              <span className="mt-3 text-base font-bold leading-tight">{t('menu.twoPlayers')}</span>
+              <span className="text-xs text-gray-500 leading-tight">{t('menu.twoPlayersSub')}</span>
             </button>
             <button
               onClick={handleClickOnline}
               className="w-44 h-36 flex flex-col items-center justify-center p-4 bg-gray-200 text-[#242424] rounded-lg border-0 hover:scale-105 hover:ring-4 hover:ring-[#3C82F6]/60 transition-all duration-200 ease-in-out group"
             >
               <GlobeIcon className="h-8 w-8 group-hover:text-[#3C82F6] transition-colors duration-200" />
-              <span className="mt-3 text-base font-bold leading-tight">Online</span>
+              <span className="mt-3 text-base font-bold leading-tight">{t('menu.online')}</span>
               <span className="text-xs leading-tight opacity-0 select-none" aria-hidden="true">·</span>
             </button>
           </div>

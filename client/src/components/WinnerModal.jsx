@@ -1,9 +1,11 @@
 import Square from "./Square"
+import { useI18n } from "../i18n/i18n"
 
 export default function WinnerModal({ winner, resetGame }) {
+  const { t } = useI18n()
   if (winner === null) return null
 
-  const winnerText = winner === false ? 'Empate' : `El ganador es:`
+  const winnerText = winner === false ? t('game.draw') : t('game.winnerIs')
 
   return (
     <section className="absolute flex justify-center items-center">
@@ -15,7 +17,7 @@ export default function WinnerModal({ winner, resetGame }) {
         <footer className="w-full mt-8 flex justify-center">
           <button
             className="px-3 py-1 border-2 bg-inherit text-white border-white rounded-md transition duration-300"
-            onClick={resetGame}>Reinicar</button>
+            onClick={resetGame}>{t('game.playAgain')}</button>
         </footer>
       </div>
     </section>
